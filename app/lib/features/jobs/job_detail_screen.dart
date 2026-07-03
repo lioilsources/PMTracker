@@ -69,26 +69,33 @@ class JobDetailScreen extends ConsumerWidget {
         error: (e, _) => ErrorView(
             error: e.toString(),
             onRetry: () => ref.invalidate(jobDetailProvider(jobId))),
-        data: (job) => ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            _InfoCard(job: job),
-            const SizedBox(height: 16),
-            _AssignmentsCard(
-              assignmentsAsync: assignmentsAsync,
-              jobId: jobId,
-              isManager: isManager,
-              ref: ref,
-            ),
-            const SizedBox(height: 16),
-            _TasksCard(
-              tasksAsync: tasksAsync,
-              jobId: jobId,
-              isManager: isManager,
-              ref: ref,
-            ),
-          ],
-        ),
+        data: (job) {
+          // RLS dovoluje přiřazovat lidi a spravovat úkoly jen
+          // vlastníkovi zakázky (owns_job), ne každému managerovi.
+          final userId = Supabase.instance.client.auth.currentUser?.id;
+          final isOwner = isManager && job['manager_id'] == userId;
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              _InfoCard(job: job),
+              const SizedBox(height: 16),
+              _AssignmentsCard(
+                assignmentsAsync: assignmentsAsync,
+                jobId: jobId,
+                isOwner: isOwner,
+                ref: ref,
+              ),
+              const SizedBox(height: 16),
+              _TasksCard(
+                tasksAsync: tasksAsync,
+                jobId: jobId,
+                companyId: job['company_id'] as String,
+                isOwner: isOwner,
+                ref: ref,
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -165,14 +172,94 @@ class _Row extends StatelessWidget {
 class _AssignmentsCard extends StatelessWidget {
   final AsyncValue<List<Map<String, dynamic>>> assignmentsAsync;
   final String jobId;
-  final bool isManager;
+  final bool isOwner;
   final WidgetRef ref;
   const _AssignmentsCard({
     required this.assignmentsAsync,
     required this.jobId,
-    required this.isManager,
+    required this.isOwner,
     required this.ref,
   });
+
+  Future<void> _showAddMemberSheet(BuildContext context) async {
+    final client = Supabase.instance.client;
+    final assignedIds = (assignmentsAsync.valueOrNull ?? [])
+        .map((a) => a['member_id'] as String)
+        .toSet();
+    // Profily celé firmy — manager může vzít i člena cizího rosteru
+    // (půjčení); RLS omezí select na vlastní firmu.
+    final profiles = (await client
+            .from('profiles')
+            .select('id, full_name, role')
+            .order('full_name') as List)
+        .cast<Map<String, dynamic>>()
+        .where((p) => !assignedIds.contains(p['id']))
+        .toList();
+
+    if (!context.mounted) return;
+    await showModalBottomSheet(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: profiles.isEmpty
+            ? const Padding(
+                padding: EdgeInsets.all(24),
+                child: Text('Všichni členové firmy už jsou přiřazeni'),
+              )
+            : ListView(
+                shrinkWrap: true,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text('Přiřadit člena',
+                        style: TextStyle(fontWeight: FontWeight.w600)),
+                  ),
+                  ...profiles.map((p) => ListTile(
+                        leading:
+                            const CircleAvatar(child: Icon(Icons.person)),
+                        title: Text(p['full_name'] as String),
+                        subtitle: Text(p['role'] as String),
+                        onTap: () async {
+                          try {
+                            await client.from('job_assignments').insert({
+                              'job_id': jobId,
+                              'member_id': p['id'],
+                              'assigned_by': client.auth.currentUser?.id,
+                            });
+                            ref.invalidate(jobAssignmentsProvider(jobId));
+                          } on PostgrestException catch (e) {
+                            if (sheetContext.mounted) {
+                              ScaffoldMessenger.of(sheetContext).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Přiřazení se nezdařilo: ${e.message}')));
+                            }
+                          }
+                          if (sheetContext.mounted) {
+                            Navigator.of(sheetContext).pop();
+                          }
+                        },
+                      )),
+                ],
+              ),
+      ),
+    );
+  }
+
+  Future<void> _removeAssignment(
+      BuildContext context, Map<String, dynamic> assignment) async {
+    try {
+      await Supabase.instance.client
+          .from('job_assignments')
+          .delete()
+          .eq('id', assignment['id'] as String);
+      ref.invalidate(jobAssignmentsProvider(jobId));
+    } on PostgrestException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Odebrání se nezdařilo: ${e.message}')));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -187,11 +274,11 @@ class _AssignmentsCard extends StatelessWidget {
                 Text('Přiřazení',
                     style: Theme.of(context).textTheme.titleMedium),
                 const Spacer(),
-                if (isManager)
+                if (isOwner)
                   TextButton.icon(
                     icon: const Icon(Icons.person_add, size: 16),
                     label: const Text('Přidat'),
-                    onPressed: () {}, // TODO: implementovat
+                    onPressed: () => _showAddMemberSheet(context),
                   ),
               ],
             ),
@@ -210,6 +297,15 @@ class _AssignmentsCard extends StatelessWidget {
                                 title: Text(a['profiles']?['full_name'] ?? '-'),
                                 subtitle:
                                     Text(a['profiles']?['role'] ?? '-'),
+                                trailing: isOwner
+                                    ? IconButton(
+                                        icon: const Icon(
+                                            Icons.remove_circle_outline),
+                                        tooltip: 'Odebrat ze zakázky',
+                                        onPressed: () =>
+                                            _removeAssignment(context, a),
+                                      )
+                                    : null,
                               ))
                           .toList(),
                     ),
@@ -224,14 +320,65 @@ class _AssignmentsCard extends StatelessWidget {
 class _TasksCard extends StatelessWidget {
   final AsyncValue<List<Map<String, dynamic>>> tasksAsync;
   final String jobId;
-  final bool isManager;
+  final String companyId;
+  final bool isOwner;
   final WidgetRef ref;
   const _TasksCard({
     required this.tasksAsync,
     required this.jobId,
-    required this.isManager,
+    required this.companyId,
+    required this.isOwner,
     required this.ref,
   });
+
+  Future<void> _showAddTaskDialog(BuildContext context) async {
+    final titleCtrl = TextEditingController();
+    final title = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Nový úkol'),
+        content: TextField(
+          controller: titleCtrl,
+          autofocus: true,
+          decoration: const InputDecoration(labelText: 'Název úkolu'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Zrušit'),
+          ),
+          FilledButton(
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(titleCtrl.text.trim()),
+            child: const Text('Přidat'),
+          ),
+        ],
+      ),
+    );
+    if (title == null || title.isEmpty) return;
+
+    final tasks = tasksAsync.valueOrNull ?? [];
+    final nextOrder = tasks.isEmpty
+        ? 1
+        : tasks
+                .map((t) => t['sort_order'] as int? ?? 0)
+                .reduce((a, b) => a > b ? a : b) +
+            1;
+    try {
+      await Supabase.instance.client.from('tasks').insert({
+        'job_id': jobId,
+        'company_id': companyId,
+        'title': title,
+        'sort_order': nextOrder,
+      });
+      ref.invalidate(jobTasksProvider(jobId));
+    } on PostgrestException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Úkol se nepodařilo přidat: ${e.message}')));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -246,11 +393,11 @@ class _TasksCard extends StatelessWidget {
                 Text('Úkoly',
                     style: Theme.of(context).textTheme.titleMedium),
                 const Spacer(),
-                if (isManager)
+                if (isOwner)
                   TextButton.icon(
                     icon: const Icon(Icons.add, size: 16),
                     label: const Text('Přidat'),
-                    onPressed: () {}, // TODO
+                    onPressed: () => _showAddTaskDialog(context),
                   ),
               ],
             ),

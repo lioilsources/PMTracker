@@ -43,6 +43,8 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
     _nameCtrl.text = job['name'] ?? '';
     _descCtrl.text = job['description'] ?? '';
     _addressCtrl.text = job['address'] ?? '';
+    _latCtrl.text = job['lat']?.toString() ?? '';
+    _lonCtrl.text = job['lng']?.toString() ?? '';
     _geofenceCtrl.text = job['geofence_radius_m']?.toString() ?? '200';
     _hoursCtrl.text = job['estimated_hours']?.toString() ?? '';
     _status = job['status'] ?? 'active';
@@ -63,6 +65,20 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
       c.dispose();
     }
     super.dispose();
+  }
+
+  /// Souřadnice: buď obě pole, nebo žádné; hodnota v platném rozsahu.
+  String? _validateCoord(
+      String? value, String otherValue, double maxAbs, String label) {
+    final text = value?.trim() ?? '';
+    if (text.isEmpty) {
+      return otherValue.trim().isEmpty ? null : 'Vyplňte obě souřadnice';
+    }
+    final parsed = double.tryParse(text);
+    if (parsed == null || parsed.abs() > maxAbs) {
+      return 'Zadejte $label v rozsahu ±${maxAbs.toInt()}';
+    }
+    return null;
   }
 
   Future<void> _save() async {
@@ -87,6 +103,13 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
           : double.tryParse(_hoursCtrl.text),
       'status': _status,
     };
+
+    // Poloha: WKT string PostgREST převede na geography.
+    // Server pak geofence ověřuje proti jobs.location.
+    final lat = double.tryParse(_latCtrl.text.trim());
+    final lon = double.tryParse(_lonCtrl.text.trim());
+    data['location'] =
+        (lat != null && lon != null) ? 'SRID=4326;POINT($lon $lat)' : null;
 
     try {
       if (_isEdit) {
@@ -159,6 +182,8 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
                           keyboardType:
                               const TextInputType.numberWithOptions(
                                   decimal: true, signed: true),
+                          validator: (v) => _validateCoord(
+                              v, _lonCtrl.text, 90, 'šířku'),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -170,6 +195,8 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
                           keyboardType:
                               const TextInputType.numberWithOptions(
                                   decimal: true, signed: true),
+                          validator: (v) => _validateCoord(
+                              v, _latCtrl.text, 180, 'délku'),
                         ),
                       ),
                     ],

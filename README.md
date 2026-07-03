@@ -24,13 +24,14 @@ PMTracker/
 │       ├── features/        # auth, tracking, jobs, roster, reports, admin
 │       └── shared/          # Shell, widgets
 └── docs/
-    └── DECISIONS.md         # Architektonická rozhodnutí
+    ├── DECISIONS.md         # Architektonická rozhodnutí
+    └── DEMO.md              # Demo scénář + testovací účty
 ```
 
 ## Spuštění (lokální dev)
 
 ```bash
-# 1. Start Supabase
+# 1. Start Supabase (migrace + seed vč. testovacích účtů — viz docs/DEMO.md)
 supabase start
 supabase db reset
 

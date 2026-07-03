@@ -36,5 +36,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/images/
+# Assets zatím žádné — až přibudou, odkomentovat:
+#  assets:
+#    - assets/images/

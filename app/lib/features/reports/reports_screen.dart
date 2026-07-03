@@ -7,17 +7,19 @@ import '../../shared/widgets/error_view.dart';
 
 part 'reports_screen.g.dart';
 
+// Parametr se nesmí jmenovat "from" — koliduje s polem
+// generovaného Riverpod provideru (ProviderBase.from).
 @riverpod
 Future<List<Map<String, dynamic>>> utilizationReport(
   UtilizationReportRef ref,
-  DateTime from,
-  DateTime to,
+  DateTime fromDate,
+  DateTime toDate,
 ) async {
   final result = await Supabase.instance.client.rpc(
     'get_member_utilization',
     params: {
-      'p_from': DateFormat('yyyy-MM-dd').format(from),
-      'p_to': DateFormat('yyyy-MM-dd').format(to),
+      'p_from': DateFormat('yyyy-MM-dd').format(fromDate),
+      'p_to': DateFormat('yyyy-MM-dd').format(toDate),
     },
   );
   return (result as List).cast<Map<String, dynamic>>();
