@@ -9,11 +9,11 @@ import '../../shared/widgets/error_view.dart';
 part 'jobs_screen.g.dart';
 
 @riverpod
-Future<List<Map<String, dynamic>>> allJobs(AllJobsRef ref) async {
+Future<List<Map<String, dynamic>>> allJobs(Ref ref) async {
   return await Supabase.instance.client
       .from('jobs')
       .select('*, profiles!jobs_manager_id_fkey(full_name)')
-      .order('created_at', ascending: false) as List<Map<String, dynamic>>;
+      .order('created_at', ascending: false);
 }
 
 class JobsScreen extends ConsumerWidget {
@@ -46,7 +46,8 @@ class JobsScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.work_outline, size: 64, color: cs.onSurfaceVariant),
+                  Icon(Icons.work_outline,
+                      size: 64, color: cs.onSurfaceVariant),
                   const SizedBox(height: 16),
                   const Text('Žádné zakázky'),
                   if (role == 'manager' || role == 'admin') ...[
@@ -66,8 +67,7 @@ class JobsScreen extends ConsumerWidget {
             separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (ctx, i) {
               final job = jobs[i];
-              final statusColor =
-                  _statusColor(job['status'] as String, cs);
+              final statusColor = _statusColor(job['status'] as String, cs);
               return Card(
                 child: InkWell(
                   onTap: () => context.push('/jobs/${job['id']}'),
@@ -116,8 +116,7 @@ class JobsScreen extends ConsumerWidget {
                                           '${job['estimated_hours']}h plán'),
                                       side: BorderSide.none,
                                       padding: EdgeInsets.zero,
-                                      labelStyle:
-                                          const TextStyle(fontSize: 12),
+                                      labelStyle: const TextStyle(fontSize: 12),
                                     ),
                                 ],
                               ),

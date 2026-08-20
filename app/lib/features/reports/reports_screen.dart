@@ -3,21 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
+import '../../core/duration_format.dart';
 import '../../shared/widgets/error_view.dart';
 
 part 'reports_screen.g.dart';
 
 @riverpod
 Future<List<Map<String, dynamic>>> utilizationReport(
-  UtilizationReportRef ref,
-  DateTime from,
-  DateTime to,
+  Ref ref,
+  DateTime fromDate,
+  DateTime toDate,
 ) async {
   final result = await Supabase.instance.client.rpc(
     'get_member_utilization',
     params: {
-      'p_from': DateFormat('yyyy-MM-dd').format(from),
-      'p_to': DateFormat('yyyy-MM-dd').format(to),
+      'p_from': DateFormat('yyyy-MM-dd').format(fromDate),
+      'p_to': DateFormat('yyyy-MM-dd').format(toDate),
     },
   );
   return (result as List).cast<Map<String, dynamic>>();
@@ -50,13 +51,6 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     }
   }
 
-  String _formatHours(int? secs) {
-    if (secs == null) return '0:00';
-    final h = secs ~/ 3600;
-    final m = (secs % 3600) ~/ 60;
-    return '$h h ${m.toString().padLeft(2, '0')} min';
-  }
-
   @override
   Widget build(BuildContext context) {
     final reportAsync = ref.watch(utilizationReportProvider(_from, _to));
@@ -84,29 +78,24 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                 Text('${fmt.format(_from)} — ${fmt.format(_to)}'),
                 const Spacer(),
                 TextButton(
-                    onPressed: _pickDateRange,
-                    child: const Text('Změnit')),
+                    onPressed: _pickDateRange, child: const Text('Změnit')),
               ],
             ),
           ),
           Expanded(
             child: reportAsync.when(
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => ErrorView(
                   error: e.toString(),
-                  onRetry: () =>
-                      ref.invalidate(utilizationReportProvider)),
+                  onRetry: () => ref.invalidate(utilizationReportProvider)),
               data: (rows) {
                 if (rows.isEmpty) {
                   return const Center(
-                      child:
-                          Text('Žádná data pro vybrané období'));
+                      child: Text('Žádná data pro vybrané období'));
                 }
 
                 // Group by member
-                final Map<String, List<Map<String, dynamic>>> byMember =
-                    {};
+                final Map<String, List<Map<String, dynamic>>> byMember = {};
                 for (final row in rows) {
                   final name = row['full_name'] as String;
                   byMember.putIfAbsent(name, () => []).add(row);
@@ -118,10 +107,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   itemBuilder: (_, i) {
                     final name = byMember.keys.elementAt(i);
                     final entries = byMember[name]!;
-                    final totalSecs = entries.fold<int>(
-                        0,
-                        (sum, e) =>
-                            sum + ((e['total_seconds'] as int?) ?? 0));
+                    final totalSecs = entries.fold<int>(0,
+                        (sum, e) => sum + ((e['total_seconds'] as int?) ?? 0));
                     final cs = Theme.of(context).colorScheme;
 
                     return Card(
@@ -130,28 +117,25 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                         leading: CircleAvatar(
                           backgroundColor: cs.primaryContainer,
                           child: Text(name[0].toUpperCase(),
-                              style: TextStyle(
-                                  color: cs.onPrimaryContainer)),
+                              style: TextStyle(color: cs.onPrimaryContainer)),
                         ),
                         title: Text(name,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w600)),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.w600)),
                         subtitle:
-                            Text('Celkem: ${_formatHours(totalSecs)}'),
+                            Text('Celkem: ${formatHoursMinutes(totalSecs)}'),
                         children: entries
                             .map((e) => ListTile(
-                                  contentPadding:
-                                      const EdgeInsets.symmetric(
-                                          horizontal: 16),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
                                   title: Text(e['job_name'] as String),
                                   trailing: Text(
-                                    _formatHours(
+                                    formatHoursMinutes(
                                         e['total_seconds'] as int?),
                                     style: const TextStyle(
                                         fontFamily: 'monospace'),
                                   ),
-                                  subtitle: Text(
-                                      '${e['entry_count']} záznamů'),
+                                  subtitle: Text('${e['entry_count']} záznamů'),
                                 ))
                             .toList(),
                       ),

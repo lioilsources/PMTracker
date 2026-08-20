@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/duration_format.dart';
 import '../auth/auth_provider.dart';
 import 'tracking_provider.dart';
 import '../../shared/widgets/error_view.dart';
@@ -28,14 +30,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     super.dispose();
   }
 
-  String _formatDuration(int totalSeconds) {
-    final h = totalSeconds ~/ 3600;
-    final m = (totalSeconds % 3600) ~/ 60;
-    final s = totalSeconds % 60;
-    return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
-  }
-
-  Future<void> _showJobPicker(BuildContext context) async {
+  Future<void> _showJobPicker() async {
     final jobs = await ref.read(myAssignedJobsProvider.future);
     if (!mounted) return;
     if (jobs.isEmpty) {
@@ -53,6 +48,16 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     if (selected == null) return;
 
     await _startTracking(selected);
+  }
+
+  Future<void> _stopTracking() async {
+    try {
+      await ref.read(trackingNotifierProvider.notifier).stopTracking();
+    } on Exception catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   Future<void> _startTracking(String jobId, {String? overrideReason}) async {
@@ -87,8 +92,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
             const SizedBox(height: 16),
             TextField(
               controller: ctrl,
-              decoration:
-                  const InputDecoration(labelText: 'Důvod override'),
+              decoration: const InputDecoration(labelText: 'Důvod override'),
               maxLines: 2,
             ),
           ],
@@ -98,9 +102,8 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
               onPressed: () => Navigator.pop(ctx, false),
               child: const Text('Zrušit')),
           FilledButton(
-            onPressed: () => ctrl.text.trim().isNotEmpty
-                ? Navigator.pop(ctx, true)
-                : null,
+            onPressed: () =>
+                ctrl.text.trim().isNotEmpty ? Navigator.pop(ctx, true) : null,
             child: const Text('Zahájit s override'),
           ),
         ],
@@ -177,7 +180,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                         children: [
                           if (isTracking) ...[
                             Text(
-                              _formatDuration(elapsed),
+                              formatHms(elapsed),
                               style: Theme.of(context)
                                   .textTheme
                                   .displaySmall
@@ -232,8 +235,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                                 size: 48, color: cs.onSurfaceVariant),
                             const SizedBox(height: 8),
                             Text('Připraven',
-                                style:
-                                    Theme.of(context).textTheme.bodyLarge),
+                                style: Theme.of(context).textTheme.bodyLarge),
                           ],
                         ],
                       ),
@@ -246,28 +248,13 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton.icon(
-                      onPressed: isTracking
-                          ? () async {
-                              try {
-                                await ref
-                                    .read(trackingNotifierProvider.notifier)
-                                    .stopTracking();
-                              } on Exception catch (e) {
-                                if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(e.toString())));
-                                }
-                              }
-                            }
-                          : () => _showJobPicker(context),
+                      onPressed: isTracking ? _stopTracking : _showJobPicker,
                       icon: Icon(isTracking ? Icons.stop : Icons.play_arrow),
-                      label: Text(
-                          isTracking ? 'Ukončit výkaz' : 'Zahájit výkaz'),
+                      label:
+                          Text(isTracking ? 'Ukončit výkaz' : 'Zahájit výkaz'),
                       style: FilledButton.styleFrom(
-                        backgroundColor:
-                            isTracking ? cs.error : cs.primary,
-                        foregroundColor:
-                            isTracking ? cs.onError : cs.onPrimary,
+                        backgroundColor: isTracking ? cs.error : cs.primary,
+                        foregroundColor: isTracking ? cs.onError : cs.onPrimary,
                         minimumSize: const Size(double.infinity, 56),
                       ),
                     ),
@@ -289,8 +276,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                             const Text('Dnes celkem'),
                             const Spacer(),
                             Text(
-                              _formatDuration(
-                                  secs + (isTracking ? elapsed : 0)),
+                              formatHms(secs + (isTracking ? elapsed : 0)),
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium

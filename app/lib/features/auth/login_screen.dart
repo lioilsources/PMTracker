@@ -93,9 +93,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       prefixIcon: Icon(Icons.lock_outlined),
                     ),
                     obscureText: true,
-                    validator: (v) => v != null && v.length >= 6
-                        ? null
-                        : 'Minimum 6 znaků',
+                    validator: (v) =>
+                        v != null && v.length >= 6 ? null : 'Minimum 6 znaků',
                   ),
                   if (_error != null) ...[
                     const SizedBox(height: 12),
