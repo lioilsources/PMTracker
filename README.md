@@ -45,6 +45,41 @@ flutter run \
   --dart-define=SUPABASE_ANON_KEY=<anon-key>
 ```
 
+Po `supabase db reset` je databáze rovnou naplněná testovacími účty
+(`admin@pmtracker.test` / `Admin123!`, `manager.a@…` / `Manager123!`,
+`member.a1@…` / `Member123!`, …) — viz `supabase/seed.sql`.
+
+## Testy
+
+```bash
+# databáze (pgTAP)
+supabase start && ./scripts/db-test.sh
+
+# aplikace
+cd app && dart run build_runner build --delete-conflicting-outputs
+flutter analyze && flutter test
+```
+
+Podrobnosti, fixtures a pravidla pro psaní testů: [docs/TESTING.md](docs/TESTING.md).
+
+## Známé mezery
+
+- **Onboarding uživatele chybí.** Nic nezakládá řádek v `profiles`, když
+  vznikne `auth.users` — přihlášený uživatel bez profilu nemá `company_id`,
+  takže nevidí nic a `start_tracking` skončí chybou `Profile not found`.
+  Chybí trigger na `auth.users` + invite flow (PLAN.md §8, bod 12).
+  Lokálně to obchází `seed.sql`.
+- **Offline vrstva neexistuje.** PowerSync je v závislostech, ale connector
+  není zapojený — capture-then-verify z PLAN.md §6 zatím nikdo neověřil.
+- **`stop_tracking` souřadnice ignoruje.** Klient je posílá (a kvůli tomu si
+  říká o polohu), server je zahodí. Buď se má geofence ověřovat i při
+  ukončení, nebo je klient nemá posílat.
+- **CSV import týmu a export reportů** z PLAN.md §8 nejsou implementované.
+- **`auto_stop_forgotten_entries()` nikdo nevolá** — funkce existuje, ale
+  `pg_cron` job není nikde naplánovaný.
+- **Feature bez repository vrstvy** (jobs, roster, reports, admin) sahají na
+  `Supabase.instance` napřímo, takže je nejde testovat bez sítě.
+
 ## Role
 
 | Role    | Může                                              |

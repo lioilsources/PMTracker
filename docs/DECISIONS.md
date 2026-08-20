@@ -25,6 +25,41 @@ cd app && dart run build_runner build --delete-conflicting-outputs
 INSERT/UPDATE/DELETE jsou explicitně zakázány RLS polítikami (WITH CHECK (FALSE)).
 Vše jde přes start_tracking() / stop_tracking() SECURITY DEFINER funkce.
 
+### D7: Testovací vrstva — pgTAP pro databázi, flutter_test pro app
+Autorita nad `within_geofence` i nad viditelností dat je v Postgresu, ne
+v klientovi, takže těžiště testů je v SQL (`supabase/tests/database/`).
+Testy jdou spustit i bez Supabase CLI — `supabase/tests/_shim/supabase_env.sql`
+dodá schéma `auth`, `auth.uid()` a role, takže stačí Postgres s PostGIS
+a pgTAP. Detaily v `docs/TESTING.md`.
+
+### D8: seed.sql zakládá i auth.users s pevnými UUID
+Původní seed byl celý zakomentovaný a čekal na ručně opsaná UUID z Studia —
+`supabase db reset` tak nechal prázdnou databázi a nešlo se ani přihlásit.
+Nově se uživatelé vkládají přímo do `auth.users` s deterministickými UUID,
+na které navazují fixtures testů.
+
+### D9: Riziková volání jdou přes repository, ne přes Supabase.instance
+`TrackingRepository` a `LocationService` jsou jediné místo, kudy tracking
+mluví se Supabase a s GPS. Bez toho nejde napsat test, který by neběžel
+proti živé síti. Ostatní feature tenhle obal zatím nemají.
+
+## Opravy nalezené testy (migrace 20260820000000)
+
+- **Nekonečná rekurze v RLS.** Politika `jobs_member_assigned` se ptala do
+  `job_assignments` a `job_assignments_select` zpět do `jobs`; Postgres na
+  poddotazy v politice aplikuje RLS znovu → `infinite recursion detected in
+  policy for relation "jobs"`. Člen si tedy nedokázal načíst ani jednu
+  zakázku. Řešeno SECURITY DEFINER helperem `is_assigned_to_job()`.
+- **Admin neviděl výkazy.** `time_entries_member_own` vyžadovala vlastní
+  záznam, vlastnictví zakázky nebo roster — admin typicky nemá nic z toho.
+  Doplněna větev `is_admin()`.
+- **Časové pásmo v součtech.** `get_today_seconds()` porovnávalo pražské
+  datum s `CURRENT_DATE` v UTC, `get_member_utilization()` filtrovalo podle
+  UTC data. Obě hranice jsou nově v `Europe/Prague`.
+- **`tasks_member_complete` nešlo odškrtnout.** `WITH CHECK (completed_by =
+  auth.uid())` šlo splnit jen při zaškrtnutí. Nově se kontroluje i příslušnost
+  úkolu k zakázce člena.
+
 ## Lokální development setup
 
 ### Předpoklady
