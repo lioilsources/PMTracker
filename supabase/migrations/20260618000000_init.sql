@@ -6,7 +6,16 @@
 -- Extensions
 CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
-CREATE EXTENSION IF NOT EXISTS pg_cron;  -- pro auto-stop
+
+-- pg_cron (auto-stop zapomenutých timerů) není dostupný na každé instanci
+-- (holý Postgres v CI, některé lokální stacky). Migrace na něm nesmí padat —
+-- samotný auto_stop_forgotten_entries() funguje i bez něj, jen se musí
+-- naplánovat ručně (viz konec souboru).
+DO $$ BEGIN
+  CREATE EXTENSION IF NOT EXISTS pg_cron;
+EXCEPTION WHEN OTHERS THEN
+  RAISE NOTICE 'pg_cron není dostupný — auto-stop je nutné naplánovat ručně';
+END $$;
 
 -- Enums (drop and recreate for idempotency)
 DO $$ BEGIN
