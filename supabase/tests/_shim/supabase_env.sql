@@ -6,9 +6,13 @@
 
 CREATE SCHEMA IF NOT EXISTS auth;
 
+-- BYPASSRLS na service_role by odpovídalo produkci, ale vyžaduje, aby
+-- připojená role byla superuser — na obraze supabase/postgres (používá ho
+-- CI) role "postgres" superuser NENÍ (schválně, kvůli paritě s hostovaným
+-- Supabase). Testy service_role nikde nepoužívají, takže atribut nechybí.
 DO $$ BEGIN CREATE ROLE anon NOLOGIN NOINHERIT; EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN CREATE ROLE authenticated NOLOGIN NOINHERIT; EXCEPTION WHEN duplicate_object THEN NULL; END $$;
-DO $$ BEGIN CREATE ROLE service_role NOLOGIN NOINHERIT BYPASSRLS; EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN CREATE ROLE service_role NOLOGIN NOINHERIT; EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Podmnožina sloupců skutečné auth.users, které používá supabase/seed.sql.
 CREATE TABLE IF NOT EXISTS auth.users (
