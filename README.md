@@ -62,6 +62,13 @@ flutter analyze && flutter test
 
 Podrobnosti, fixtures a pravidla pro psaní testů: [docs/TESTING.md](docs/TESTING.md).
 
+Pro ruční projití celé smyčky na hostovaném Supabase: založ v Dashboardu
+uživatele `admin@`, `manager.a@`, `manager.b@`, `member.a1@`, `member.a2@`,
+`member.b1@pmtracker.test` (Auto Confirm User) a v SQL Editoru spusť
+[`supabase/demo/demo_data.sql`](supabase/demo/demo_data.sql) — dohledá je
+podle e-mailu a založí firmu, roster, zakázky, týdenní úkoly i týden
+výkazů. Postup krok za krokem je v [docs/TESTING.md](docs/TESTING.md#4-ruční-otestování-celého-flow).
+
 ## Známé mezery
 
 - **Onboarding uživatele chybí.** Nic nezakládá řádek v `profiles`, když

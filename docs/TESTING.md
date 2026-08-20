@@ -151,7 +151,74 @@ await tester.pump(const Duration(milliseconds: 300));
 
 ---
 
-## 4. Co testy zatím nepokrývají
+## 4. Ruční otestování celého flow
+
+Automatické testy pokrývají databázi a tracking obrazovku. Celou smyčku
+*manager založí zakázku → přiřadí člena → člen trackuje → manager vidí
+report* je pořád potřeba jednou projít ručně na telefonu.
+
+### Lokálně
+
+```bash
+supabase start
+supabase db reset        # migrace + seed včetně auth uživatelů
+supabase status          # zkopíruj API URL a anon key
+
+cd app
+dart run build_runner build --delete-conflicting-outputs
+flutter run \
+  --dart-define=SUPABASE_URL=http://127.0.0.1:54321 \
+  --dart-define=SUPABASE_ANON_KEY=<anon key ze supabase status>
+```
+
+Na fyzickém telefonu `localhost` nefunguje — místo něj patří do
+`SUPABASE_URL` IP počítače v téže síti (`http://192.168.x.x:54321`).
+
+### Na hostovaném Supabase
+
+Tam se uživatelé zakládají přes Auth a jejich UUID se předem nezná, takže
+`seed.sql` s pevnými UUID nepoužiješ. Postup:
+
+1. **Dashboard → Authentication → Users → Add user** — pro každý z e-mailů
+   `admin@`, `manager.a@`, `manager.b@`, `member.a1@`, `member.a2@`,
+   `member.b1@pmtracker.test`. Zaškrtnout **Auto Confirm User**, jinak se
+   uživatel nepřihlásí.
+2. **Dashboard → SQL Editor** — vložit a spustit `supabase/demo/demo_data.sql`.
+   Skript si uživatele najde podle e-mailu, založí firmu, profily, roster,
+   dvě zakázky s geofencem, přiřazení (včetně půjčení napříč rostery),
+   týdenní úkoly a týden odpracovaných výkazů. Je idempotentní.
+   Když uživatel chybí, skript to rovnou vypíše.
+3. **Dashboard → Project Settings → API** — `Project URL` a `anon public`
+   klíč patří do `--dart-define`.
+
+Ověření podle rolí — přihlas se postupně jako:
+
+| Účet | Co má vidět |
+|---|---|
+| `member.a1@` | dvě zakázky (Praha i Brno), jen své výkazy |
+| `member.a2@` | jednu zakázku (Praha), jen své výkazy |
+| `manager.a@` | roster Petr + Tomáš, report včetně Petrových hodin na cizí brněnské zakázce |
+| `manager.b@` | roster Eva; Petra jen na své brněnské zakázce, ne jeho pražské hodiny |
+| `admin@` | všechny profily, všechny výkazy |
+
+Geofence se ověřuje na simulované poloze:
+
+- **iOS simulátor** — Features → Location → Custom Location
+  (50.0827 / 14.4244 = uvnitř pražské zakázky, 49.1951 / 16.6071 = mimo).
+- **Android emulátor** — Extended controls (⋯) → Location → Set location.
+
+Uvnitř geofence start projde a záznam má „Na místě“. Mimo geofence server
+start odmítne, appka nabídne dialog s důvodem a po potvrzení vznikne
+záznam „Override“ + řádek v `audit_log` (vidí ho jen admin).
+
+### Týdenní úkoly — čemu nevěřit
+
+`tasks` je **jen checklist na zakázce**. Čas se v MVP trackuje na zakázku,
+ne na úkol, a schéma nemá týden ani plánované alokace — demo skript proto
+týden vyrábí jen prefixem v názvu. Skutečná plánovací vrstva (kapacita,
+alokace dopředu, plán vs. skutečnost) je až Fáze 3, viz PLAN.md §10.
+
+## 5. Co testy zatím nepokrývají
 
 - **Offline / PowerSync** — connector zatím není zapojený (viz D4
   v `DECISIONS.md`); capture-then-verify z PLAN.md §6 je tím pádem
