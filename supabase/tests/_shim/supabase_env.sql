@@ -14,20 +14,29 @@ DO $$ BEGIN CREATE ROLE anon NOLOGIN NOINHERIT; EXCEPTION WHEN duplicate_object 
 DO $$ BEGIN CREATE ROLE authenticated NOLOGIN NOINHERIT; EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN CREATE ROLE service_role NOLOGIN NOINHERIT; EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- Podmnožina sloupců skutečné auth.users, které používá supabase/seed.sql.
+-- Na obraze supabase/postgres (CI) auth.users už existuje, ale jen s
+-- baseline schématem z docker-entrypoint-initdb.d — sloupce, které přidávají
+-- pozdější GoTrue migrace (mj. email_confirmed_at, tam je jen starší
+-- confirmed_at), se aplikují až za běhu skutečné auth služby, kterou tu
+-- nespouštíme. CREATE TABLE IF NOT EXISTS by na téhle existující tabulce
+-- byl no-op, takže chybějící sloupce místo toho doplňujeme přes
+-- ADD COLUMN IF NOT EXISTS — funguje jak nad touto tabulkou, tak nad
+-- prázdnou databází (bare Postgres), kde se založí od nuly.
 CREATE TABLE IF NOT EXISTS auth.users (
-  instance_id UUID,
-  id UUID PRIMARY KEY,
-  aud TEXT,
-  role TEXT,
-  email TEXT UNIQUE,
-  encrypted_password TEXT,
-  email_confirmed_at TIMESTAMPTZ,
-  raw_app_meta_data JSONB,
-  raw_user_meta_data JSONB,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
+  id UUID PRIMARY KEY
 );
+
+ALTER TABLE auth.users
+  ADD COLUMN IF NOT EXISTS instance_id UUID,
+  ADD COLUMN IF NOT EXISTS aud TEXT,
+  ADD COLUMN IF NOT EXISTS role TEXT,
+  ADD COLUMN IF NOT EXISTS email TEXT,
+  ADD COLUMN IF NOT EXISTS encrypted_password TEXT,
+  ADD COLUMN IF NOT EXISTS email_confirmed_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS raw_app_meta_data JSONB,
+  ADD COLUMN IF NOT EXISTS raw_user_meta_data JSONB,
+  ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW(),
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
 -- auth.uid() čte sub z JWT claimů stejně jako na Supabase.
 CREATE OR REPLACE FUNCTION auth.uid() RETURNS UUID
