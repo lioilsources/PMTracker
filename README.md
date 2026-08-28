@@ -62,7 +62,56 @@ Při override mimo geofence se zapíše audit log.
 
 ---
 
-## Investor pitch
+## Investor pitch (English)
+
+**In one sentence:** a mobile time tracker that proves someone was actually on
+site — without ever storing their location.
+
+### Problem
+
+Construction firms and field-service teams still report hours on paper, over
+WhatsApp and in Excel. Managers have no way to verify who was where; workers
+have no way to prove overtime. Existing tools either track location continuously
+— which meets resistance from employees and runs into GDPR — or they are generic
+HR products with no link to a specific job.
+
+### Solution
+
+A Flutter app (iOS + Android) on Supabase. Coordinates are transmitted **only on
+start/stop**. The server (PostgreSQL + PostGIS) verifies with `ST_DWithin` that
+the point falls inside the job's geofence, stores only the boolean
+`within_geofence` — and **discards the coordinates**. Work outside the geofence
+can be permitted with an override, which is written to an audit log. The
+member / manager / admin roles are enforced in the database (RLS), not in the
+app.
+
+### Why it can win
+
+- **Privacy by design as a sales argument.** "We don't store your people's
+  location" is a sentence that shortens the sale — it removes the negotiation
+  with works councils and legal.
+- **Verifiability instead of trust.** The output isn't a movement map but an
+  auditable "was / wasn't on site" record — exactly what billing the end
+  customer requires.
+- **Offline-first.** Construction sites have no signal. The architecture
+  accounts for that from the start with PowerSync (activated in phase 2).
+
+### Status
+
+MVP, initial commit June 2026. The data model, migrations, RLS, roles, geofence
+RPC and the Flutter shell with its feature modules (auth, tracking, jobs,
+roster, reports, admin) are in place. This is not a deployed product: the
+offline layer is prepared but not activated, and it is not yet running at any
+customer.
+
+### Next milestones
+
+Pilot deployments with the first companies, activating offline mode, export to
+payroll systems, distribution via the App Store and Google Play.
+
+---
+
+## Investor pitch (česky)
 
 **Jednou větou:** mobilní time tracker, který díky geofencingu na straně serveru
 prokáže, že člověk opravdu byl na stavbě — a přitom nesbírá jeho polohu.
