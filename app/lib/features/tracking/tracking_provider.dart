@@ -86,14 +86,14 @@ class TrackingNotifier extends _$TrackingNotifier {
 }
 
 @riverpod
-Future<int> todaySeconds(TodaySecondsRef ref) async {
+Future<int> todaySeconds(Ref ref) async {
   final result = await Supabase.instance.client.rpc('get_today_seconds');
   return (result as int?) ?? 0;
 }
 
 @riverpod
 Future<List<Map<String, dynamic>>> myAssignedJobs(
-    MyAssignedJobsRef ref) async {
+    Ref ref) async {
   final result = await Supabase.instance.client
       .from('job_assignments')
       .select('job_id, jobs(id, name, status, address, geofence_radius_m)')

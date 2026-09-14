@@ -9,11 +9,11 @@ import '../../shared/widgets/error_view.dart';
 part 'jobs_screen.g.dart';
 
 @riverpod
-Future<List<Map<String, dynamic>>> allJobs(AllJobsRef ref) async {
+Future<List<Map<String, dynamic>>> allJobs(Ref ref) async {
   return await Supabase.instance.client
       .from('jobs')
       .select('*, profiles!jobs_manager_id_fkey(full_name)')
-      .order('created_at', ascending: false) as List<Map<String, dynamic>>;
+      .order('created_at', ascending: false);
 }
 
 class JobsScreen extends ConsumerWidget {
@@ -22,7 +22,7 @@ class JobsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final jobsAsync = ref.watch(allJobsProvider);
-    final profile = ref.watch(currentProfileProvider).valueOrNull;
+    final profile = ref.watch(currentProfileProvider).value;
     final role = profile?['role'] as String? ?? 'member';
     final cs = Theme.of(context).colorScheme;
 

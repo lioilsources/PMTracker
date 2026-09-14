@@ -9,7 +9,7 @@ part 'reports_screen.g.dart';
 
 @riverpod
 Future<List<Map<String, dynamic>>> utilizationReport(
-  UtilizationReportRef ref,
+  Ref ref,
   DateTime from,
   DateTime to,
 ) async {

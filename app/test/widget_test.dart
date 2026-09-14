@@ -1,30 +1,34 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:pmtracker/main.dart';
+import 'package:pmtracker/features/tracking/tracking_provider.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('ActiveEntry.fromMap', () {
+    test('načte řádek z get_active_entry', () {
+      final entry = ActiveEntry.fromMap({
+        'id': '11111111-1111-1111-1111-111111111111',
+        'job_id': '00000000-0000-0000-0000-0000000000a1',
+        'job_name': 'Rekonstrukce kanceláří Praha',
+        'started_at': '2026-09-08T07:30:00Z',
+        'within_geofence': true,
+      });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+      expect(entry.id, '11111111-1111-1111-1111-111111111111');
+      expect(entry.jobId, '00000000-0000-0000-0000-0000000000a1');
+      expect(entry.jobName, 'Rekonstrukce kanceláří Praha');
+      expect(entry.startedAt, DateTime.parse('2026-09-08T07:30:00Z'));
+      expect(entry.withinGeofence, isTrue);
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    test('within_geofence smí být null, dokud server neověří polohu', () {
+      final entry = ActiveEntry.fromMap({
+        'id': '22222222-2222-2222-2222-222222222222',
+        'job_id': '00000000-0000-0000-0000-0000000000b1',
+        'job_name': 'Instalace klimatizace Brno',
+        'started_at': '2026-09-08T09:00:00Z',
+        'within_geofence': null,
+      });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      expect(entry.withinGeofence, isNull);
+    });
   });
 }
