@@ -9,7 +9,7 @@ import '../../shared/widgets/error_view.dart';
 part 'job_detail_screen.g.dart';
 
 @riverpod
-Future<Map<String, dynamic>> jobDetail(JobDetailRef ref, String jobId) async {
+Future<Map<String, dynamic>> jobDetail(Ref ref, String jobId) async {
   final result = await Supabase.instance.client
       .from('jobs')
       .select('*, profiles!jobs_manager_id_fkey(full_name)')
@@ -20,22 +20,22 @@ Future<Map<String, dynamic>> jobDetail(JobDetailRef ref, String jobId) async {
 
 @riverpod
 Future<List<Map<String, dynamic>>> jobTasks(
-    JobTasksRef ref, String jobId) async {
+    Ref ref, String jobId) async {
   return await Supabase.instance.client
       .from('tasks')
       .select()
       .eq('job_id', jobId)
-      .order('sort_order') as List<Map<String, dynamic>>;
+      .order('sort_order');
 }
 
 @riverpod
 Future<List<Map<String, dynamic>>> jobAssignments(
-    JobAssignmentsRef ref, String jobId) async {
+    Ref ref, String jobId) async {
   return await Supabase.instance.client
       .from('job_assignments')
       .select(
           '*, profiles!job_assignments_member_id_fkey(full_name, role)')
-      .eq('job_id', jobId) as List<Map<String, dynamic>>;
+      .eq('job_id', jobId);
 }
 
 class JobDetailScreen extends ConsumerWidget {
@@ -47,7 +47,7 @@ class JobDetailScreen extends ConsumerWidget {
     final jobAsync = ref.watch(jobDetailProvider(jobId));
     final tasksAsync = ref.watch(jobTasksProvider(jobId));
     final assignmentsAsync = ref.watch(jobAssignmentsProvider(jobId));
-    final profile = ref.watch(currentProfileProvider).valueOrNull;
+    final profile = ref.watch(currentProfileProvider).value;
     final role = profile?['role'] as String? ?? 'member';
     final isManager = role == 'manager' || role == 'admin';
 

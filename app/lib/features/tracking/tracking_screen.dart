@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../auth/auth_provider.dart';
 import 'tracking_provider.dart';
 import '../../shared/widgets/error_view.dart';
@@ -58,7 +59,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
   Future<void> _startTracking(String jobId, {String? overrideReason}) async {
     try {
       await ref
-          .read(trackingNotifierProvider.notifier)
+          .read(trackingProvider.notifier)
           .startTracking(jobId, overrideReason: overrideReason);
     } on Exception catch (e) {
       if (!mounted) return;
@@ -113,9 +114,9 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final entryAsync = ref.watch(trackingNotifierProvider);
+    final entryAsync = ref.watch(trackingProvider);
     final todayAsync = ref.watch(todaySecondsProvider);
-    final profile = ref.watch(currentProfileProvider).valueOrNull;
+    final profile = ref.watch(currentProfileProvider).value;
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -134,7 +135,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => ErrorView(
             error: e.toString(),
-            onRetry: () => ref.invalidate(trackingNotifierProvider)),
+            onRetry: () => ref.invalidate(trackingProvider)),
         data: (entry) {
           final isTracking = entry != null;
           final elapsed = isTracking
@@ -250,7 +251,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                           ? () async {
                               try {
                                 await ref
-                                    .read(trackingNotifierProvider.notifier)
+                                    .read(trackingProvider.notifier)
                                     .stopTracking();
                               } on Exception catch (e) {
                                 if (mounted) {
