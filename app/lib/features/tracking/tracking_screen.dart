@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../auth/auth_provider.dart';
 import 'tracking_provider.dart';
 import '../../shared/widgets/error_view.dart';

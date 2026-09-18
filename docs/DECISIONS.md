@@ -25,6 +25,28 @@ cd app && dart run build_runner build --delete-conflicting-outputs
 INSERT/UPDATE/DELETE jsou explicitně zakázány RLS polítikami (WITH CHECK (FALSE)).
 Vše jde přes start_tracking() / stop_tracking() SECURITY DEFINER funkce.
 
+### D7: Demo je online-only, PowerSync odloženo (2026-07)
+Pro demo MVP se offline sync (PowerSync) neaktivuje — appka čte/píše přímo
+přes Supabase klienta. Capture-then-verify offline architektura (PLAN §6)
+zůstává dalším krokem po demu; závislost `powersync` v pubspec zůstává.
+
+### D8: Bezpečnostní opravy v migraci 20260703000000_demo_fixes (2026-07)
+- Trigger `protect_profile_columns`: člen si nesmí změnit `role`,
+  `company_id` ani `manager_id` (eskalace práv přes profiles_update_own).
+- Všechny SECURITY DEFINER funkce mají `SET search_path = public, extensions`.
+- `jobs_manager_update` doplněn `WITH CHECK` (nelze předat zakázku/firmu).
+- `companies` a `projects` dostaly SELECT politiky (dřív default-deny).
+- Rozbit RLS cyklus jobs ↔ job_assignments (infinite recursion při každém
+  SELECTu přihlášeného uživatele) — podmínky přes SECURITY DEFINER helpery
+  `is_assigned_to_job()` a `job_company_id()`.
+
+### D9: Poloha zakázky přes WKT + generované sloupce (2026-07)
+Klient zapisuje `jobs.location` jako WKT string `SRID=4326;POINT(lon lat)`
+(PostgREST ho převede na geography). Pro čtení slouží generované sloupce
+`jobs.lat` / `jobs.lng` (ST_Y/ST_X). Profily nových uživatelů zakládá
+trigger `handle_new_user` z user metadata; auto-stop zapomenutých časovačů
+plánuje pg_cron každých 30 minut.
+
 ## Lokální development setup
 
 ### Předpoklady
@@ -33,13 +55,10 @@ Vše jde přes start_tracking() / stop_tracking() SECURITY DEFINER funkce.
 - Docker Desktop (pro lokální Supabase)
 
 ### Kroky
-1. `cd /Volumes/YOTTA/Dev/PMTracker && supabase start`
-2. `supabase db reset` (aplikuje migrace + seed)
-3. Otevřít Supabase Studio: http://localhost:54323
-4. Vytvořit testovací uživatele v Authentication > Users
-5. Zjistit jejich UUID: `SELECT id, email FROM auth.users;`
-6. Vyplnit UUID v supabase/seed.sql a spustit seed
-7. `cd app && flutter run --dart-define=SUPABASE_URL=http://localhost:54321 --dart-define=SUPABASE_ANON_KEY=<anon-key>`
+1. `supabase start`
+2. `supabase db reset` (aplikuje migrace + seed — vytvoří i testovací účty, viz docs/DEMO.md)
+3. `cd app && dart run build_runner build --delete-conflicting-outputs`
+4. `flutter run --dart-define=SUPABASE_URL=http://localhost:54321 --dart-define=SUPABASE_ANON_KEY=<anon-key>`
 
 ### Anon key lokálně
 Po `supabase start` zkopírovat anon key z výstupu nebo:
