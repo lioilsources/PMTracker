@@ -9,7 +9,7 @@ import '../../shared/widgets/error_view.dart';
 part 'job_detail_screen.g.dart';
 
 @riverpod
-Future<Map<String, dynamic>> jobDetail(JobDetailRef ref, String jobId) async {
+Future<Map<String, dynamic>> jobDetail(Ref ref, String jobId) async {
   final result = await Supabase.instance.client
       .from('jobs')
       .select('*, profiles!jobs_manager_id_fkey(full_name)')
@@ -19,23 +19,20 @@ Future<Map<String, dynamic>> jobDetail(JobDetailRef ref, String jobId) async {
 }
 
 @riverpod
-Future<List<Map<String, dynamic>>> jobTasks(
-    JobTasksRef ref, String jobId) async {
+Future<List<Map<String, dynamic>>> jobTasks(Ref ref, String jobId) async {
   return await Supabase.instance.client
       .from('tasks')
       .select()
       .eq('job_id', jobId)
-      .order('sort_order') as List<Map<String, dynamic>>;
+      .order('sort_order');
 }
 
 @riverpod
-Future<List<Map<String, dynamic>>> jobAssignments(
-    JobAssignmentsRef ref, String jobId) async {
+Future<List<Map<String, dynamic>>> jobAssignments(Ref ref, String jobId) async {
   return await Supabase.instance.client
       .from('job_assignments')
-      .select(
-          '*, profiles!job_assignments_member_id_fkey(full_name, role)')
-      .eq('job_id', jobId) as List<Map<String, dynamic>>;
+      .select('*, profiles!job_assignments_member_id_fkey(full_name, role)')
+      .eq('job_id', jobId);
 }
 
 class JobDetailScreen extends ConsumerWidget {
@@ -106,8 +103,7 @@ class _InfoCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Informace',
-                style: Theme.of(context).textTheme.titleMedium),
+            Text('Informace', style: Theme.of(context).textTheme.titleMedium),
             const Divider(),
             if (job['description'] != null) ...[
               Text(job['description'] as String),
@@ -150,11 +146,9 @@ class _Row extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon,
-              size: 16,
-              color: Theme.of(context).colorScheme.onSurfaceVariant),
+              size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(width: 8),
-          Text('$label: ',
-              style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w500)),
           Expanded(child: Text(value, overflow: TextOverflow.ellipsis)),
         ],
       ),
@@ -208,8 +202,7 @@ class _AssignmentsCard extends StatelessWidget {
                                 leading: const CircleAvatar(
                                     child: Icon(Icons.person)),
                                 title: Text(a['profiles']?['full_name'] ?? '-'),
-                                subtitle:
-                                    Text(a['profiles']?['role'] ?? '-'),
+                                subtitle: Text(a['profiles']?['role'] ?? '-'),
                               ))
                           .toList(),
                     ),
@@ -243,8 +236,7 @@ class _TasksCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text('Úkoly',
-                    style: Theme.of(context).textTheme.titleMedium),
+                Text('Úkoly', style: Theme.of(context).textTheme.titleMedium),
                 const Spacer(),
                 if (isManager)
                   TextButton.icon(
@@ -277,17 +269,15 @@ class _TasksCard extends StatelessWidget {
                                   await Supabase.instance.client
                                       .from('tasks')
                                       .update({
-                                        'is_completed': val,
-                                        'completed_by': val == true
-                                            ? Supabase.instance.client.auth
-                                                .currentUser?.id
-                                            : null,
-                                        'completed_at': val == true
-                                            ? DateTime.now()
-                                                .toIso8601String()
-                                            : null,
-                                      })
-                                      .eq('id', t['id'] as String);
+                                    'is_completed': val,
+                                    'completed_by': val == true
+                                        ? Supabase.instance.client.auth
+                                            .currentUser?.id
+                                        : null,
+                                    'completed_at': val == true
+                                        ? DateTime.now().toIso8601String()
+                                        : null,
+                                  }).eq('id', t['id'] as String);
                                   ref.invalidate(jobTasksProvider(jobId));
                                 },
                               ))

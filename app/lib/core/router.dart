@@ -15,7 +15,7 @@ import '../shared/shell/app_shell.dart';
 part 'router.g.dart';
 
 @riverpod
-GoRouter router(RouterRef ref) {
+GoRouter router(Ref ref) {
   final authState = ref.watch(authStateProvider);
 
   return GoRouter(

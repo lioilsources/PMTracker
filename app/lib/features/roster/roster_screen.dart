@@ -7,12 +7,12 @@ import '../../shared/widgets/error_view.dart';
 part 'roster_screen.g.dart';
 
 @riverpod
-Future<List<Map<String, dynamic>>> myRoster(MyRosterRef ref) async {
+Future<List<Map<String, dynamic>>> myRoster(Ref ref) async {
   final userId = Supabase.instance.client.auth.currentUser?.id;
   return await Supabase.instance.client
       .from('profiles')
       .select()
-      .eq('manager_id', userId!) as List<Map<String, dynamic>>;
+      .eq('manager_id', userId!);
 }
 
 class RosterScreen extends ConsumerWidget {

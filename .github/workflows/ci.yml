@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  database:
+    name: Databáze (pgTAP)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        # Obraz Supabase — obsahuje PostGIS i pgTAP, tedy stejné prostředí
+        # jako produkce. Holý postgres:16 by na CREATE EXTENSION postgis spadl.
+        image: supabase/postgres:15.8.1.060
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalace psql a pg_prove
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client libtap-parser-sourcehandler-pgtap-perl
+
+      - name: Migrace, seed a pgTAP testy
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+        run: ./scripts/db-test.sh
+
+  flutter:
+    name: Flutter (analyze + test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.1'
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Generování kódu (Riverpod)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - run: dart format --output=none --set-exit-if-changed lib test
+
+      - run: flutter analyze
+
+      - run: flutter test
