@@ -7,11 +7,11 @@ import '../../shared/widgets/error_view.dart';
 part 'admin_screen.g.dart';
 
 @riverpod
-Future<List<Map<String, dynamic>>> allUsers(AllUsersRef ref) async {
+Future<List<Map<String, dynamic>>> allUsers(Ref ref) async {
   return await Supabase.instance.client
       .from('profiles')
       .select()
-      .order('full_name') as List<Map<String, dynamic>>;
+      .order('full_name');
 }
 
 class AdminScreen extends ConsumerWidget {

@@ -9,7 +9,7 @@ class AppShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profile = ref.watch(currentProfileProvider).valueOrNull;
+    final profile = ref.watch(currentProfileProvider).value;
     final role = profile?['role'] as String? ?? 'member';
     final location = GoRouterState.of(context).matchedLocation;
 
