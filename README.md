@@ -34,7 +34,7 @@ PMTracker/
 supabase start
 supabase db reset
 
-# 2. Získej anon key
+# 2. Získej publishable (anon) key
 supabase status
 
 # 3. Spusť Flutter app
@@ -42,7 +42,7 @@ cd app
 dart run build_runner build --delete-conflicting-outputs
 flutter run \
   --dart-define=SUPABASE_URL=http://localhost:54321 \
-  --dart-define=SUPABASE_ANON_KEY=<anon-key>
+  --dart-define=SUPABASE_PUBLISHABLE_KEY=<publishable-key>
 ```
 
 ## Role

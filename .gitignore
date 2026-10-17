@@ -6,6 +6,7 @@ app/.flutter-plugins-dependencies
 app/.packages
 app/android/local.properties
 app/android/.gradle/
+app/android/.kotlin/
 app/ios/.symlinks/
 app/ios/Flutter/Flutter.framework
 app/ios/Flutter/Flutter.podspec
