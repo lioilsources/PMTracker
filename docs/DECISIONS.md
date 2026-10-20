@@ -39,10 +39,10 @@ Vše jde přes start_tracking() / stop_tracking() SECURITY DEFINER funkce.
 4. Vytvořit testovací uživatele v Authentication > Users
 5. Zjistit jejich UUID: `SELECT id, email FROM auth.users;`
 6. Vyplnit UUID v supabase/seed.sql a spustit seed
-7. `cd app && flutter run --dart-define=SUPABASE_URL=http://localhost:54321 --dart-define=SUPABASE_ANON_KEY=<anon-key>`
+7. `cd app && flutter run --dart-define=SUPABASE_URL=http://localhost:54321 --dart-define=SUPABASE_PUBLISHABLE_KEY=<publishable-key>`
 
-### Anon key lokálně
-Po `supabase start` zkopírovat anon key z výstupu nebo:
+### Publishable key lokálně
+Po `supabase start` zkopírovat publishable (anon) key z výstupu nebo:
 ```bash
 supabase status
 ```
