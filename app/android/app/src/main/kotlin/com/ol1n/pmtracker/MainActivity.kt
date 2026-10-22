@@ -1,4 +1,4 @@
-package cz.pmtracker.pmtracker
+package com.ol1n.pmtracker
 
 import io.flutter.embedding.android.FlutterActivity
 

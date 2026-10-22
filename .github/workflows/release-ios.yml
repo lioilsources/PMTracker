@@ -120,7 +120,7 @@ jobs:
           TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
         run: |
           /usr/libexec/PlistBuddy -c "Set :teamID $TEAM_ID" app/ios/ExportOptions.plist
-          /usr/libexec/PlistBuddy -c "Set :provisioningProfiles:cz.pmtracker.pmtracker $PROFILE_NAME" app/ios/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Set :provisioningProfiles:com.ol1n.pmtracker $PROFILE_NAME" app/ios/ExportOptions.plist
           xcodebuild -exportArchive \
             -archivePath $RUNNER_TEMP/Runner.xcarchive \
             -exportOptionsPlist app/ios/ExportOptions.plist \
