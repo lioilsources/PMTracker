@@ -51,8 +51,6 @@
 	</dict>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Poloha se ověří jen při spuštění a zastavení měření času, aby se potvrdilo, že jste na místě zakázky. Souřadnice se neukládají.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
