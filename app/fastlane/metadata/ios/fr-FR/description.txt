@@ -1,0 +1,6 @@
+PMTracker est un outil de suivi du temps pour les équipes du bâtiment et de l'intervention terrain.
+
+• Démarrez et arrêtez le suivi du temps sur le chantier qui vous est affecté
+• Votre position n'est comparée à la zone du chantier qu'au démarrage et à l'arrêt ; les coordonnées sont supprimées et seul le résultat est enregistré
+• Hors de la zone, vous pouvez continuer en indiquant un motif, et votre responsable est informé
+• Les responsables créent des chantiers et consultent les rapports d'heures par membre de l'équipe ; les administrateurs gèrent utilisateurs et rôles

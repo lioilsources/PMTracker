@@ -1,0 +1,1 @@
+Registrera arbetstid per uppdrag och visa vem som var på plats. Din plats kontrolleras bara vid start och stopp och sparas aldrig.

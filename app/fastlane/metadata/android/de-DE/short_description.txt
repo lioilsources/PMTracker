@@ -1,0 +1,1 @@
+Zeiterfassung mit Geofence: Stunden pro Auftrag ohne Standortspeicherung

@@ -1,0 +1,1 @@
+Suivez le temps de travail par chantier et prouvez qui était sur place. Votre position n'est vérifiée qu'au démarrage et à l'arrêt, et jamais enregistrée.

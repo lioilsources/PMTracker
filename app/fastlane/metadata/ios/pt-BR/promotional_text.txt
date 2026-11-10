@@ -1,0 +1,1 @@
+Registre as horas por obra e comprove quem estava no local. A localização só é verificada ao iniciar e encerrar e nunca é armazenada.

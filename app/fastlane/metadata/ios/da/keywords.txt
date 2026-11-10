@@ -1,0 +1,1 @@
+tidsregistrering,timeseddel,geofence,opgave,byggeri,service,arbejdstid,fremmøde,GPS

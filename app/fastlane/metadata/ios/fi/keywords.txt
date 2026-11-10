@@ -1,0 +1,1 @@
+ajanseuranta,tuntilista,geofence,työkohde,rakennus,kenttätyö,työaika,läsnäolo,GPS

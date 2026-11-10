@@ -1,0 +1,1 @@
+Ewidencja czasu z geofence: godziny na zleceniach bez zapisu lokalizacji

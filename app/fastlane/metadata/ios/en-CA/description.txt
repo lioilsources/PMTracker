@@ -1,0 +1,6 @@
+PMTracker is a time tracker for construction and field-service teams.
+
+• Start and stop time tracking on the job you are assigned to
+• Your position is checked against the job's geofence only when you start and stop; coordinates are discarded and only the result is stored
+• Outside the geofence you can continue with a reason, and your manager is informed
+• Managers create jobs and see reports of hours per team member; admins manage users and roles

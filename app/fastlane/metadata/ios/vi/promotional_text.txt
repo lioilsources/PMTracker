@@ -1,0 +1,1 @@
+Ghi thời gian làm việc theo từng công việc và chứng minh ai đã có mặt tại hiện trường. Vị trí chỉ được kiểm tra khi bắt đầu và kết thúc, không bao giờ được lưu.

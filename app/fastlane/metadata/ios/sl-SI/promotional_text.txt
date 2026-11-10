@@ -1,0 +1,1 @@
+Beležite delovni čas po naročilih in dokažite, kdo je bil na lokaciji. Lokacija se preveri le ob začetku in koncu in se nikoli ne shrani.

@@ -1,0 +1,6 @@
+PMTracker is een tijdregistratie voor bouw- en buitendienstteams.
+
+• Start en stop de tijdregistratie op de opdracht waaraan je bent toegewezen
+• Je positie wordt alleen bij start en stop vergeleken met de geofence van de opdracht; de coördinaten worden weggegooid en alleen het resultaat wordt opgeslagen
+• Buiten de geofence kun je doorgaan met een reden, en je leidinggevende wordt op de hoogte gebracht
+• Leidinggevenden maken opdrachten aan en zien rapporten van uren per teamlid; beheerders beheren gebruikers en rollen

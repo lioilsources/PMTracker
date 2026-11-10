@@ -1,0 +1,6 @@
+PMTracker este o aplicație de pontaj pentru echipele de construcții și service în teren.
+
+• Pornește și oprește pontajul pe lucrarea care ți-a fost alocată
+• Poziția ta este comparată cu geofence-ul lucrării doar la start și stop; coordonatele sunt șterse și se stochează doar rezultatul
+• În afara geofence-ului poți continua indicând un motiv, iar managerul este informat
+• Managerii creează lucrări și văd rapoarte de ore pe membru al echipei; administratorii gestionează utilizatorii și rolurile

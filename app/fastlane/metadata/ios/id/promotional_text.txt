@@ -1,0 +1,1 @@
+Catat waktu kerja per pekerjaan dan buktikan siapa yang ada di lokasi. Lokasi hanya diperiksa saat mulai dan berhenti, dan tidak pernah disimpan.

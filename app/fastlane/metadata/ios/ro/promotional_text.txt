@@ -1,0 +1,1 @@
+Înregistrează timpul de lucru pe lucrări și dovedește cine a fost la fața locului. Locația este verificată doar la start și stop și nu este stocată niciodată.

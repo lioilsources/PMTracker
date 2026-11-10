@@ -1,0 +1,1 @@
+evidencija vremena,satnica,geofence,posao,gradilište,teren,radno vrijeme,prisutnost,GPS

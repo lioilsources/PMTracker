@@ -1,0 +1,1 @@
+Rejestruj czas pracy na zleceniach i udowodnij, kto był na miejscu. Lokalizacja jest sprawdzana tylko przy starcie i stopie i nigdy nie jest zapisywana.

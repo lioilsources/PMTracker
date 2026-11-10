@@ -1,0 +1,6 @@
+PMTracker är tidrapportering för bygg- och fältserviceteam.
+
+• Starta och avsluta tidrapporteringen på uppdraget du är tilldelad
+• Din position jämförs med uppdragets geofence bara vid start och stopp; koordinaterna kasseras och bara resultatet sparas
+• Utanför geofence kan du fortsätta med en orsak, och din chef får besked
+• Chefer skapar uppdrag och ser rapporter över timmar per teammedlem; administratörer hanterar användare och roller

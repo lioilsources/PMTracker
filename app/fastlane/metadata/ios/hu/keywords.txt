@@ -1,0 +1,1 @@
+időrögzítés,jelenléti ív,geofence,munka,építkezés,terepi szerviz,munkaidő,jelenlét,GPS

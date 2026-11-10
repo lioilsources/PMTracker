@@ -1,0 +1,6 @@
+A PMTracker időrögzítő építőipari és terepi szervizcsapatoknak.
+
+• Indítsd és állítsd le az időrögzítést a hozzád rendelt munkán
+• A helyzeted csak indításkor és leállításkor kerül összevetésre a munka geofence-ével; a koordináták eldobásra kerülnek, csak az eredmény tárolódik
+• A geofence-en kívül indoklással folytathatod, és a vezetőd értesül
+• A vezetők munkákat hoznak létre, és tagonként látják az órák riportját; az adminok a felhasználókat és szerepköröket kezelik

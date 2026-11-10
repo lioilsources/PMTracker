@@ -1,0 +1,6 @@
+PMTracker, inşaat ve saha servisi ekipleri için bir zaman kayıt uygulamasıdır.
+
+• Size atanan işte zaman kaydını başlatın ve bitirin
+• Konumunuz yalnızca başlatırken ve bitirirken işin coğrafi sınırıyla karşılaştırılır; koordinatlar atılır, yalnızca sonuç saklanır
+• Sınırın dışında bir neden belirterek devam edebilirsiniz ve yönetici bilgilendirilir
+• Yöneticiler iş oluşturur ve ekip üyesi başına saat raporlarını görür; yöneticiler (admin) kullanıcıları ve rolleri yönetir

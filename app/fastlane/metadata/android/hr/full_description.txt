@@ -1,0 +1,6 @@
+PMTracker je evidencija vremena za građevinske i terenske timove.
+
+• Započnite i završite evidenciju vremena na poslu koji vam je dodijeljen
+• Vaša se pozicija uspoređuje s geofenceom posla samo pri početku i završetku; koordinate se odbacuju i sprema se samo rezultat
+• Izvan geofencea možete nastaviti uz navođenje razloga, a voditelj se obavještava
+• Voditelji stvaraju poslove i vide izvještaje o satima po članu tima; administratori upravljaju korisnicima i ulogama

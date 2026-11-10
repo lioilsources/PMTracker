@@ -1,0 +1,6 @@
+O PMTracker é um registro de horas para equipes de construção e serviço de campo.
+
+• Inicie e encerre o registro de horas na obra que lhe foi atribuída
+• Sua posição só é comparada com a geocerca da obra ao iniciar e encerrar; as coordenadas são descartadas e só o resultado é armazenado
+• Fora da geocerca você pode continuar informando o motivo, e o gerente é avisado
+• Gerentes criam obras e veem relatórios de horas por membro da equipe; administradores gerenciam usuários e papéis

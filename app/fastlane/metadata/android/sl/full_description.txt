@@ -1,0 +1,6 @@
+PMTracker je evidenca časa za gradbene in terenske servisne ekipe.
+
+• Začnite in končajte evidenco časa na naročilu, ki vam je dodeljeno
+• Vaš položaj se primerja z geofencom naročila le ob začetku in koncu; koordinate se zavržejo, shrani se samo rezultat
+• Zunaj geofencea lahko nadaljujete z navedbo razloga, vodja pa je obveščen
+• Vodje ustvarjajo naročila in vidijo poročila o urah po članih ekipe; skrbniki upravljajo uporabnike in vloge

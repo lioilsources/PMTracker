@@ -1,0 +1,6 @@
+PMTracker ist eine Zeiterfassung für Bau- und Außendienstteams.
+
+• Starte und beende die Zeiterfassung auf dem Auftrag, dem du zugewiesen bist
+• Deine Position wird nur beim Start und Stopp mit dem Geofence des Auftrags verglichen; die Koordinaten werden verworfen, nur das Ergebnis wird gespeichert
+• Außerhalb des Geofence kannst du mit einer Begründung fortfahren, und dein Vorgesetzter wird informiert
+• Vorgesetzte legen Aufträge an und sehen Berichte über die Stunden pro Teammitglied; Admins verwalten Benutzer und Rollen

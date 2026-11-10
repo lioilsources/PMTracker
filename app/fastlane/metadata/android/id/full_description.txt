@@ -1,0 +1,6 @@
+PMTracker adalah pencatat waktu untuk tim konstruksi dan layanan lapangan.
+
+• Mulai dan akhiri pencatatan waktu pada pekerjaan yang ditugaskan kepada Anda
+• Posisi Anda hanya dibandingkan dengan geofence pekerjaan saat mulai dan berhenti; koordinat dibuang dan hanya hasilnya yang disimpan
+• Di luar geofence Anda bisa melanjutkan dengan alasan, dan manajer diberi tahu
+• Manajer membuat pekerjaan dan melihat laporan jam per anggota tim; admin mengelola pengguna dan peran

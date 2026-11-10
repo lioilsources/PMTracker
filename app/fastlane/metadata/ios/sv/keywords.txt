@@ -1,0 +1,1 @@
+tidrapportering,tidkort,geofence,uppdrag,bygg,fältservice,arbetstid,närvaro,GPS

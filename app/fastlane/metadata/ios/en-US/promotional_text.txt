@@ -1,0 +1,1 @@
+Track working time per job and prove who was on site. Your location is checked only when you start and stop, and is never stored.

@@ -1,0 +1,1 @@
+Rögzítsd a munkaidőt munkánként, és igazold, ki volt a helyszínen. A helyzeted csak indításkor és leállításkor ellenőrizzük, és sosem tároljuk.

@@ -1,0 +1,1 @@
+Registreer werktijd per opdracht en bewijs wie er ter plaatse was. Je locatie wordt alleen bij start en stop gecontroleerd en nooit opgeslagen.

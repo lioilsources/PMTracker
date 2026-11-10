@@ -1,0 +1,6 @@
+PMTracker er tidsregistrering for bygge- og servicelag i felt.
+
+• Start og stopp tidsregistreringen på oppdraget du er tildelt
+• Posisjonen din sammenlignes med oppdragets geofence bare ved start og stopp; koordinatene forkastes og bare resultatet lagres
+• Utenfor geofence kan du fortsette med en begrunnelse, og lederen får beskjed
+• Ledere oppretter oppdrag og ser rapporter over timer per teammedlem; administratorer styrer brukere og roller

@@ -1,0 +1,6 @@
+PMTracker je evidencia času pre stavebné a servisné tímy v teréne.
+
+• Spustite a ukončite meranie času na zákazke, ku ktorej ste priradení
+• Poloha sa porovná s geofence zákazky iba pri štarte a stope; súradnice sa zahodia a uloží sa iba výsledok
+• Mimo geofence môžete pokračovať s uvedením dôvodu a manažér sa dozvie
+• Manažéri zakladajú zákazky a vidia reporty hodín na člena tímu; administrátori spravujú používateľov a roly

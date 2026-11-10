@@ -1,0 +1,1 @@
+Registrer arbeidstid per oppdrag og dokumenter hvem som var på stedet. Posisjonen sjekkes bare ved start og stopp og lagres aldri.

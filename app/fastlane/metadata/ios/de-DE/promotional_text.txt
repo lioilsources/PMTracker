@@ -1,0 +1,1 @@
+Erfasse die Arbeitszeit pro Auftrag und weise nach, wer vor Ort war. Dein Standort wird nur beim Start und Stopp geprüft und nie gespeichert.

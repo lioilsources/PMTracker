@@ -1,0 +1,1 @@
+Registrer arbejdstid pr. opgave og dokumenter, hvem der var på stedet. Din placering tjekkes kun ved start og stop og gemmes aldrig.
