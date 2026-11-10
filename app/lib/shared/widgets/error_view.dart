@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
 class ErrorView extends StatelessWidget {
   final String error;
@@ -27,7 +28,7 @@ class ErrorView extends StatelessWidget {
             const SizedBox(height: 16),
             FilledButton.tonal(
               onPressed: onRetry,
-              child: const Text('Zkusit znovu'),
+              child: Text(AppLocalizations.of(context).retry),
             ),
           ],
         ),

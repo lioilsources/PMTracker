@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/error_view.dart';
 
 part 'reports_screen.g.dart';
@@ -50,21 +51,22 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     }
   }
 
-  String _formatHours(int? secs) {
+  String _formatHours(AppLocalizations l, int? secs) {
     if (secs == null) return '0:00';
     final h = secs ~/ 3600;
     final m = (secs % 3600) ~/ 60;
-    return '$h h ${m.toString().padLeft(2, '0')} min';
+    return l.hoursMinutes(h, m.toString().padLeft(2, '0'));
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final reportAsync = ref.watch(utilizationReportProvider(_from, _to));
-    final fmt = DateFormat('d. M. yyyy');
+    final fmt = DateFormat.yMd(Localizations.localeOf(context).toString());
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reporty'),
+        title: Text(l.reportsTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.date_range),
@@ -85,7 +87,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                 const Spacer(),
                 TextButton(
                     onPressed: _pickDateRange,
-                    child: const Text('Změnit')),
+                    child: Text(l.change)),
               ],
             ),
           ),
@@ -99,9 +101,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                       ref.invalidate(utilizationReportProvider)),
               data: (rows) {
                 if (rows.isEmpty) {
-                  return const Center(
-                      child:
-                          Text('Žádná data pro vybrané období'));
+                  return Center(child: Text(l.noReportData));
                 }
 
                 // Group by member
@@ -137,7 +137,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                             style: const TextStyle(
                                 fontWeight: FontWeight.w600)),
                         subtitle:
-                            Text('Celkem: ${_formatHours(totalSecs)}'),
+                            Text(l.totalLabel(_formatHours(l, totalSecs))),
                         children: entries
                             .map((e) => ListTile(
                                   contentPadding:
@@ -146,12 +146,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                                   title: Text(e['job_name'] as String),
                                   trailing: Text(
                                     _formatHours(
-                                        e['total_seconds'] as int?),
+                                        l, e['total_seconds'] as int?),
                                     style: const TextStyle(
                                         fontFamily: 'monospace'),
                                   ),
-                                  subtitle: Text(
-                                      '${e['entry_count']} záznamů'),
+                                  subtitle: Text(l.entryCount(
+                                      (e['entry_count'] as num).toInt())),
                                 ))
                             .toList(),
                       ),

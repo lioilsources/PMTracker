@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../auth/auth_provider.dart';
+import '../../l10n/app_localizations.dart';
+import '../../shared/labels.dart';
 import '../../shared/widgets/error_view.dart';
 
 part 'job_detail_screen.g.dart';
@@ -55,7 +57,7 @@ class JobDetailScreen extends ConsumerWidget {
       appBar: AppBar(
         title: jobAsync.maybeWhen(
             data: (j) => Text(j['name'] as String),
-            orElse: () => const Text('Zakázka')),
+            orElse: () => Text(AppLocalizations.of(context).jobFallbackTitle)),
         actions: [
           if (isManager)
             IconButton(
@@ -100,13 +102,14 @@ class _InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Informace',
+            Text(l.info,
                 style: Theme.of(context).textTheme.titleMedium),
             const Divider(),
             if (job['description'] != null) ...[
@@ -115,20 +118,20 @@ class _InfoCard extends StatelessWidget {
             ],
             _Row(
                 icon: Icons.person,
-                label: 'Manager',
+                label: l.manager,
                 value: job['profiles']?['full_name'] ?? '-'),
             _Row(
                 icon: Icons.location_on,
-                label: 'Adresa',
-                value: job['address'] ?? 'Nezadána'),
+                label: l.address,
+                value: job['address'] ?? l.addressUnset),
             _Row(
                 icon: Icons.radar,
-                label: 'Geofence',
+                label: l.geofence,
                 value: '${job['geofence_radius_m']} m'),
             if (job['estimated_hours'] != null)
               _Row(
                   icon: Icons.schedule,
-                  label: 'Odhad hodin',
+                  label: l.estimatedHoursShort,
                   value: '${job['estimated_hours']} h'),
           ],
         ),
@@ -176,6 +179,7 @@ class _AssignmentsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -184,13 +188,13 @@ class _AssignmentsCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text('Přiřazení',
+                Text(l.assignments,
                     style: Theme.of(context).textTheme.titleMedium),
                 const Spacer(),
                 if (isManager)
                   TextButton.icon(
                     icon: const Icon(Icons.person_add, size: 16),
-                    label: const Text('Přidat'),
+                    label: Text(l.add),
                     onPressed: () {}, // TODO: implementovat
                   ),
               ],
@@ -198,9 +202,9 @@ class _AssignmentsCard extends StatelessWidget {
             const Divider(),
             assignmentsAsync.when(
               loading: () => const LinearProgressIndicator(),
-              error: (e, _) => Text('Chyba: $e'),
+              error: (e, _) => Text(l.errorWith('$e')),
               data: (assignments) => assignments.isEmpty
-                  ? const Text('Žádní přiřazení členové')
+                  ? Text(l.noAssignedMembers)
                   : Column(
                       children: assignments
                           .map((a) => ListTile(
@@ -209,7 +213,9 @@ class _AssignmentsCard extends StatelessWidget {
                                     child: Icon(Icons.person)),
                                 title: Text(a['profiles']?['full_name'] ?? '-'),
                                 subtitle:
-                                    Text(a['profiles']?['role'] ?? '-'),
+                                    Text(a['profiles']?['role'] == null
+                                        ? '-'
+                                        : roleLabel(l, a['profiles']['role'] as String)),
                               ))
                           .toList(),
                     ),
@@ -235,6 +241,7 @@ class _TasksCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -243,13 +250,13 @@ class _TasksCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text('Úkoly',
+                Text(l.tasks,
                     style: Theme.of(context).textTheme.titleMedium),
                 const Spacer(),
                 if (isManager)
                   TextButton.icon(
                     icon: const Icon(Icons.add, size: 16),
-                    label: const Text('Přidat'),
+                    label: Text(l.add),
                     onPressed: () {}, // TODO
                   ),
               ],
@@ -257,9 +264,9 @@ class _TasksCard extends StatelessWidget {
             const Divider(),
             tasksAsync.when(
               loading: () => const LinearProgressIndicator(),
-              error: (e, _) => Text('Chyba: $e'),
+              error: (e, _) => Text(l.errorWith('$e')),
               data: (tasks) => tasks.isEmpty
-                  ? const Text('Žádné úkoly')
+                  ? Text(l.noTasks)
                   : Column(
                       children: tasks
                           .map((t) => CheckboxListTile(

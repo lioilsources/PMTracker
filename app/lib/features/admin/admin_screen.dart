@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../l10n/app_localizations.dart';
+import '../../shared/labels.dart';
 import '../../shared/widgets/error_view.dart';
 
 part 'admin_screen.g.dart';
@@ -23,7 +25,7 @@ class AdminScreen extends ConsumerWidget {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Správa uživatelů')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).adminTitle)),
       body: usersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => ErrorView(
@@ -75,6 +77,7 @@ class _RoleChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return PopupMenuButton<String>(
       initialValue: currentRole,
       onSelected: (role) async {
@@ -83,22 +86,17 @@ class _RoleChip extends StatelessWidget {
             .update({'role': role}).eq('id', userId);
         ref.invalidate(allUsersProvider);
       },
-      itemBuilder: (_) => const [
-        PopupMenuItem(value: 'member', child: Text('Člen')),
-        PopupMenuItem(value: 'manager', child: Text('Manager')),
-        PopupMenuItem(value: 'admin', child: Text('Admin')),
+      itemBuilder: (_) => [
+        PopupMenuItem(value: 'member', child: Text(l.roleMember)),
+        PopupMenuItem(value: 'manager', child: Text(l.roleManager)),
+        PopupMenuItem(value: 'admin', child: Text(l.roleAdmin)),
       ],
       child: Chip(
-        label: Text(_roleLabel(currentRole)),
+        label: Text(roleLabel(l, currentRole, fallback: l.roleMember)),
         padding: EdgeInsets.zero,
         side: BorderSide.none,
       ),
     );
   }
 
-  String _roleLabel(String r) => switch (r) {
-        'admin' => 'Admin',
-        'manager' => 'Manager',
-        _ => 'Člen',
-      };
 }

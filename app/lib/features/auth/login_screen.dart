@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:go_router/go_router.dart';
+import '../../l10n/app_localizations.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -69,33 +70,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Evidence času na zakázkách',
+                    AppLocalizations.of(context).loginSubtitle,
                     style: Theme.of(context).textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 40),
                   TextFormField(
                     controller: _emailCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'E-mail',
-                      prefixIcon: Icon(Icons.email_outlined),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context).emailLabel,
+                      prefixIcon: const Icon(Icons.email_outlined),
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (v) => v != null && v.contains('@')
                         ? null
-                        : 'Zadejte platný e-mail',
+                        : AppLocalizations.of(context).emailInvalid,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _passCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Heslo',
-                      prefixIcon: Icon(Icons.lock_outlined),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context).passwordLabel,
+                      prefixIcon: const Icon(Icons.lock_outlined),
                     ),
                     obscureText: true,
                     validator: (v) => v != null && v.length >= 6
                         ? null
-                        : 'Minimum 6 znaků',
+                        : AppLocalizations.of(context).passwordMin,
                   ),
                   if (_error != null) ...[
                     const SizedBox(height: 12),
@@ -114,7 +115,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Přihlásit se'),
+                        : Text(AppLocalizations.of(context).signIn),
                   ),
                 ],
               ),
