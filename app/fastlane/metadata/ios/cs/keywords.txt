@@ -1,0 +1,1 @@
+evidence času,výkaz,geofence,zakázka,stavba,montáž,docházka,pracovní doba,GPS

@@ -1,0 +1,6 @@
+PMTracker là ứng dụng chấm công cho đội xây dựng và dịch vụ hiện trường.
+
+• Bắt đầu và kết thúc chấm công trên công việc được giao cho bạn
+• Vị trí của bạn chỉ được so với geofence của công việc khi bắt đầu và kết thúc; tọa độ bị loại bỏ và chỉ lưu kết quả
+• Ngoài geofence bạn vẫn có thể tiếp tục bằng cách nêu lý do, và quản lý sẽ được thông báo
+• Quản lý tạo công việc và xem báo cáo giờ theo từng thành viên; quản trị viên quản lý người dùng và vai trò

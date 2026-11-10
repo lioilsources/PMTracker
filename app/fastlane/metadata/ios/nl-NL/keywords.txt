@@ -1,0 +1,1 @@
+tijdregistratie,urenstaat,geofence,opdracht,bouw,buitendienst,werktijd,aanwezigheid,GPS

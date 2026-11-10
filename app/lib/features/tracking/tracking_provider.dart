@@ -4,6 +4,17 @@ import 'package:geolocator/geolocator.dart';
 
 part 'tracking_provider.g.dart';
 
+enum LocationProblem { servicesOff, denied, deniedForever }
+
+/// Why the position could not be read; the UI turns it into a localized message.
+class LocationException implements Exception {
+  final LocationProblem problem;
+  const LocationException(this.problem);
+
+  @override
+  String toString() => 'LocationException($problem)';
+}
+
 class ActiveEntry {
   final String id;
   final String jobId;
@@ -64,19 +75,18 @@ class TrackingNotifier extends _$TrackingNotifier {
   Future<Position> _getPosition() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      throw Exception('Lokalizační služby jsou vypnuté');
+      throw const LocationException(LocationProblem.servicesOff);
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        throw Exception('Přístup k poloze odmítnut');
+        throw const LocationException(LocationProblem.denied);
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      throw Exception(
-          'Přístup k poloze trvale odmítnut — povolte v nastavení');
+      throw const LocationException(LocationProblem.deniedForever);
     }
 
     return Geolocator.getCurrentPosition(

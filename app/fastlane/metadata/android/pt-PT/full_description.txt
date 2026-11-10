@@ -1,0 +1,6 @@
+O PMTracker é um registo de horas para equipas de construção e serviço externo.
+
+• Inicie e termine o registo de horas na obra que lhe foi atribuída
+• A sua posição só é comparada com a geovedação da obra ao iniciar e terminar; as coordenadas são descartadas e só o resultado é guardado
+• Fora da geovedação pode continuar indicando o motivo, e o responsável é informado
+• Os responsáveis criam obras e veem relatórios de horas por membro da equipa; os administradores gerem utilizadores e funções

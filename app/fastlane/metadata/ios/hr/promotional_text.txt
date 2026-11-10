@@ -1,0 +1,1 @@
+Bilježite radno vrijeme po poslu i dokažite tko je bio na lokaciji. Lokacija se provjerava samo pri početku i završetku i nikad se ne sprema.

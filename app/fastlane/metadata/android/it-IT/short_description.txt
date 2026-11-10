@@ -1,0 +1,1 @@
+Registro del tempo con geofence: ore per commessa senza salvare la posizione

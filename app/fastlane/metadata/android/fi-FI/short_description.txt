@@ -1,0 +1,1 @@
+Ajanseuranta geofencellä: tunnit kohteittain ilman sijainnin tallennusta

@@ -1,0 +1,1 @@
+Seuraa työaikaa kohteittain ja todista, kuka oli paikalla. Sijainti tarkistetaan vain aloitettaessa ja lopetettaessa, eikä sitä tallenneta.

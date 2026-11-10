@@ -1,0 +1,1 @@
+Suivi du temps avec zone géographique, sans stocker la position

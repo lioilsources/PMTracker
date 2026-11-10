@@ -1,0 +1,1 @@
+Tidsregistrering med geofence: timer per oppdrag uten å lagre posisjon

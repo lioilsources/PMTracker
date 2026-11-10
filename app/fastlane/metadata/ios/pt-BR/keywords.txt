@@ -1,0 +1,1 @@
+registro de horas,ponto,geocerca,obra,construção,serviço de campo,jornada,presença,GPS

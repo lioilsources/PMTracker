@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../auth/auth_provider.dart';
+import '../../l10n/app_localizations.dart';
+import '../../shared/labels.dart';
 import '../../shared/widgets/error_view.dart';
 
 part 'jobs_screen.g.dart';
@@ -25,14 +27,15 @@ class JobsScreen extends ConsumerWidget {
     final profile = ref.watch(currentProfileProvider).value;
     final role = profile?['role'] as String? ?? 'member';
     final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Zakázky')),
+      appBar: AppBar(title: Text(l.jobsTitle)),
       floatingActionButton: (role == 'manager' || role == 'admin')
           ? FloatingActionButton.extended(
               onPressed: () => context.push('/jobs/new'),
               icon: const Icon(Icons.add),
-              label: const Text('Nová zakázka'),
+              label: Text(l.newJob),
             )
           : null,
       body: jobsAsync.when(
@@ -48,12 +51,12 @@ class JobsScreen extends ConsumerWidget {
                 children: [
                   Icon(Icons.work_outline, size: 64, color: cs.onSurfaceVariant),
                   const SizedBox(height: 16),
-                  const Text('Žádné zakázky'),
+                  Text(l.noJobs),
                   if (role == 'manager' || role == 'admin') ...[
                     const SizedBox(height: 8),
                     FilledButton.tonal(
                       onPressed: () => context.push('/jobs/new'),
-                      child: const Text('Vytvořit zakázku'),
+                      child: Text(l.createJob),
                     ),
                   ],
                 ],
@@ -101,8 +104,8 @@ class JobsScreen extends ConsumerWidget {
                                 spacing: 8,
                                 children: [
                                   Chip(
-                                    label: Text(
-                                        _statusLabel(job['status'] as String)),
+                                    label: Text(jobStatusLabel(
+                                        l, job['status'] as String)),
                                     backgroundColor:
                                         statusColor.withValues(alpha: 0.15),
                                     side: BorderSide.none,
@@ -112,8 +115,8 @@ class JobsScreen extends ConsumerWidget {
                                   ),
                                   if (job['estimated_hours'] != null)
                                     Chip(
-                                      label: Text(
-                                          '${job['estimated_hours']}h plán'),
+                                      label: Text(l.plannedHours(
+                                          '${job['estimated_hours']}')),
                                       side: BorderSide.none,
                                       padding: EdgeInsets.zero,
                                       labelStyle:
@@ -144,11 +147,4 @@ class JobsScreen extends ConsumerWidget {
         _ => cs.onSurfaceVariant,
       };
 
-  String _statusLabel(String status) => switch (status) {
-        'active' => 'Aktivní',
-        'paused' => 'Pozastavena',
-        'completed' => 'Dokončena',
-        'archived' => 'Archiv',
-        _ => status,
-      };
 }

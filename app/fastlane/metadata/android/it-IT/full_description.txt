@@ -1,0 +1,6 @@
+PMTracker è un registro del tempo per team di edilizia e assistenza sul campo.
+
+• Avvia e termina la registrazione del tempo sulla commessa che ti è assegnata
+• La tua posizione viene confrontata con il geofence della commessa solo all'avvio e allo stop; le coordinate vengono scartate e si salva solo l'esito
+• Fuori dal geofence puoi continuare indicando un motivo, e il responsabile viene informato
+• I responsabili creano commesse e vedono report delle ore per membro del team; gli amministratori gestiscono utenti e ruoli

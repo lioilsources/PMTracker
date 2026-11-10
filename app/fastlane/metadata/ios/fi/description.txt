@@ -1,0 +1,6 @@
+PMTracker on ajanseuranta rakennus- ja kenttähuoltotiimeille.
+
+• Aloita ja lopeta ajanseuranta kohteessa, johon sinut on osoitettu
+• Sijaintisi verrataan kohteen geofenceen vain aloitettaessa ja lopetettaessa; koordinaatit hylätään ja vain tulos tallennetaan
+• Geofencen ulkopuolella voit jatkaa antamalla syyn, ja esihenkilö saa tiedon
+• Esihenkilöt luovat kohteita ja näkevät tuntiraportit tiimin jäsenittäin; ylläpitäjät hallitsevat käyttäjiä ja rooleja

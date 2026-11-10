@@ -1,0 +1,1 @@
+pontaj,fișă de pontaj,geofence,lucrare,construcții,teren,ore de lucru,prezență,GPS

@@ -1,0 +1,1 @@
+pencatat waktu,absensi,geofence,pekerjaan,konstruksi,layanan lapangan,jam kerja,GPS

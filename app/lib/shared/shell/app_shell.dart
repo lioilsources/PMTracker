@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/auth_provider.dart';
+import '../../l10n/app_localizations.dart';
 
 class AppShell extends ConsumerWidget {
   final Widget child;
@@ -9,6 +10,7 @@ class AppShell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final profile = ref.watch(currentProfileProvider).value;
     final role = profile?['role'] as String? ?? 'member';
     final location = GoRouterState.of(context).matchedLocation;
@@ -20,33 +22,33 @@ class AppShell extends ConsumerWidget {
     if (location.startsWith('/admin')) selectedIndex = 4;
 
     final destinations = <NavigationDestination>[
-      const NavigationDestination(
-        icon: Icon(Icons.timer_outlined),
-        selectedIcon: Icon(Icons.timer),
-        label: 'Výkaz',
+      NavigationDestination(
+        icon: const Icon(Icons.timer_outlined),
+        selectedIcon: const Icon(Icons.timer),
+        label: l.navTracking,
       ),
-      const NavigationDestination(
-        icon: Icon(Icons.work_outline),
-        selectedIcon: Icon(Icons.work),
-        label: 'Zakázky',
+      NavigationDestination(
+        icon: const Icon(Icons.work_outline),
+        selectedIcon: const Icon(Icons.work),
+        label: l.navJobs,
       ),
       if (role == 'manager' || role == 'admin')
-        const NavigationDestination(
-          icon: Icon(Icons.group_outlined),
-          selectedIcon: Icon(Icons.group),
-          label: 'Roster',
+        NavigationDestination(
+          icon: const Icon(Icons.group_outlined),
+          selectedIcon: const Icon(Icons.group),
+          label: l.navRoster,
         ),
       if (role == 'manager' || role == 'admin')
-        const NavigationDestination(
-          icon: Icon(Icons.bar_chart_outlined),
-          selectedIcon: Icon(Icons.bar_chart),
-          label: 'Reporty',
+        NavigationDestination(
+          icon: const Icon(Icons.bar_chart_outlined),
+          selectedIcon: const Icon(Icons.bar_chart),
+          label: l.navReports,
         ),
       if (role == 'admin')
-        const NavigationDestination(
-          icon: Icon(Icons.admin_panel_settings_outlined),
-          selectedIcon: Icon(Icons.admin_panel_settings),
-          label: 'Admin',
+        NavigationDestination(
+          icon: const Icon(Icons.admin_panel_settings_outlined),
+          selectedIcon: const Icon(Icons.admin_panel_settings),
+          label: l.navAdmin,
         ),
     ];
 

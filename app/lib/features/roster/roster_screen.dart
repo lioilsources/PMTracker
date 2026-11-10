@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../l10n/app_localizations.dart';
+import '../../shared/labels.dart';
 import '../../shared/widgets/error_view.dart';
 
 part 'roster_screen.g.dart';
@@ -20,11 +22,12 @@ class RosterScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final rosterAsync = ref.watch(myRosterProvider);
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Můj tým')),
+      appBar: AppBar(title: Text(l.rosterTitle)),
       body: rosterAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => ErrorView(
@@ -39,10 +42,10 @@ class RosterScreen extends ConsumerWidget {
                   Icon(Icons.group_outlined,
                       size: 64, color: cs.onSurfaceVariant),
                   const SizedBox(height: 16),
-                  const Text('Nemáte žádné členy v týmu'),
+                  Text(l.noTeamMembers),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Požádejte administrátora o přiřazení členů',
+                  Text(
+                    l.askAdminAssign,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -67,7 +70,7 @@ class RosterScreen extends ConsumerWidget {
                     ),
                   ),
                   title: Text(m['full_name'] as String),
-                  subtitle: Text(_roleLabel(m['role'] as String)),
+                  subtitle: Text(roleLabel(l, m['role'] as String, full: true)),
                   trailing: const Icon(Icons.chevron_right),
                 ),
               );
@@ -78,10 +81,4 @@ class RosterScreen extends ConsumerWidget {
     );
   }
 
-  String _roleLabel(String role) => switch (role) {
-        'admin' => 'Administrátor',
-        'manager' => 'Manager',
-        'member' => 'Člen',
-        _ => role,
-      };
 }

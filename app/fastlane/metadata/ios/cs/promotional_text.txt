@@ -1,0 +1,1 @@
+Měř pracovní čas na zakázkách a doložit, kdo byl na místě. Poloha se ověří jen při startu a stopu a nikam se neukládá.

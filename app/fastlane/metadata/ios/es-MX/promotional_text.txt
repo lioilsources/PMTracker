@@ -1,0 +1,1 @@
+Registra el tiempo de trabajo por obra y demuestra quién estuvo allí. Tu ubicación solo se comprueba al iniciar y terminar, y nunca se guarda.

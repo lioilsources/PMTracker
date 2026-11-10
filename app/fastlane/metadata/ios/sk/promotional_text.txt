@@ -1,0 +1,1 @@
+Merajte pracovný čas na zákazkách a doložte, kto bol na mieste. Poloha sa overí iba pri štarte a stope a nikam sa neukladá.

@@ -1,0 +1,1 @@
+"NSLocationWhenInUseUsageDescription" = "PMTrackerは、勤務時間の記録を開始・終了するときに、案件の現場にいるかどうかを確認します。位置情報は保存されず、確認結果のみが保存されます。";

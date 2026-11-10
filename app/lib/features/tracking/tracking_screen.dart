@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../auth/auth_provider.dart';
 import 'tracking_provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/error_view.dart';
 
 class TrackingScreen extends ConsumerStatefulWidget {
@@ -29,6 +30,18 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     super.dispose();
   }
 
+  String _errorText(Object e) {
+    final l = AppLocalizations.of(context);
+    if (e is LocationException) {
+      return switch (e.problem) {
+        LocationProblem.servicesOff => l.locationServicesOff,
+        LocationProblem.denied => l.locationDenied,
+        LocationProblem.deniedForever => l.locationDeniedForever,
+      };
+    }
+    return e.toString();
+  }
+
   String _formatDuration(int totalSeconds) {
     final h = totalSeconds ~/ 3600;
     final m = (totalSeconds % 3600) ~/ 60;
@@ -41,8 +54,8 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     if (!mounted) return;
     if (jobs.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Nejste přiřazeni k žádné aktivní zakázce')),
+        SnackBar(
+            content: Text(AppLocalizations.of(context).noAssignedActiveJob)),
       );
       return;
     }
@@ -68,28 +81,27 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
         _showOverrideDialog(jobId);
       } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(msg)));
+            .showSnackBar(SnackBar(content: Text(_errorText(e))));
       }
     }
   }
 
   Future<void> _showOverrideDialog(String jobId) async {
     final ctrl = TextEditingController();
+    final l = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('Mimo geofence'),
+        title: Text(l.outsideGeofenceTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-                'Nejste na místě zakázky. Uveďte důvod a manager bude informován.'),
+            Text(l.outsideGeofenceBody),
             const SizedBox(height: 16),
             TextField(
               controller: ctrl,
-              decoration:
-                  const InputDecoration(labelText: 'Důvod override'),
+              decoration: InputDecoration(labelText: l.overrideReasonLabel),
               maxLines: 2,
             ),
           ],
@@ -97,12 +109,12 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Zrušit')),
+              child: Text(l.cancel)),
           FilledButton(
             onPressed: () => ctrl.text.trim().isNotEmpty
                 ? Navigator.pop(ctx, true)
                 : null,
-            child: const Text('Zahájit s override'),
+            child: Text(l.startWithOverride),
           ),
         ],
       ),
@@ -118,10 +130,11 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
     final todayAsync = ref.watch(todaySecondsProvider);
     final profile = ref.watch(currentProfileProvider).value;
     final cs = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Výkaz práce'),
+        title: Text(l.trackingTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -149,7 +162,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                 children: [
                   if (profile != null) ...[
                     Text(
-                      'Dobrý den, ${(profile['full_name'] as String).split(' ').first}!',
+                      l.greeting((profile['full_name'] as String).split(' ').first),
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 32),
@@ -215,8 +228,8 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                                 const SizedBox(width: 4),
                                 Text(
                                   entry.withinGeofence == true
-                                      ? 'Na místě'
-                                      : 'Override',
+                                      ? l.onSite
+                                      : l.overrideBadge,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall
@@ -232,7 +245,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                             Icon(Icons.timer_outlined,
                                 size: 48, color: cs.onSurfaceVariant),
                             const SizedBox(height: 8),
-                            Text('Připraven',
+                            Text(l.ready,
                                 style:
                                     Theme.of(context).textTheme.bodyLarge),
                           ],
@@ -256,14 +269,13 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                               } on Exception catch (e) {
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(e.toString())));
+                                      SnackBar(content: Text(_errorText(e))));
                                 }
                               }
                             }
                           : () => _showJobPicker(context),
                       icon: Icon(isTracking ? Icons.stop : Icons.play_arrow),
-                      label: Text(
-                          isTracking ? 'Ukončit výkaz' : 'Zahájit výkaz'),
+                      label: Text(isTracking ? l.stopShift : l.startShift),
                       style: FilledButton.styleFrom(
                         backgroundColor:
                             isTracking ? cs.error : cs.primary,
@@ -287,7 +299,7 @@ class _TrackingScreenState extends ConsumerState<TrackingScreen> {
                           children: [
                             const Icon(Icons.today),
                             const SizedBox(width: 12),
-                            const Text('Dnes celkem'),
+                            Text(l.todayTotal),
                             const Spacer(),
                             Text(
                               _formatDuration(
@@ -324,7 +336,7 @@ class _JobPickerSheet extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Text('Vyberte zakázku',
+            child: Text(AppLocalizations.of(context).pickJob,
                 style: Theme.of(context).textTheme.titleMedium),
           ),
           const Divider(height: 1),

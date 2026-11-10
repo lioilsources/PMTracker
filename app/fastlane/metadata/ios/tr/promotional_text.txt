@@ -1,0 +1,1 @@
+Çalışma süresini iş bazında kaydedin, sahada kimin olduğunu kanıtlayın. Konum yalnızca başlatırken ve bitirirken denetlenir, asla saklanmaz.

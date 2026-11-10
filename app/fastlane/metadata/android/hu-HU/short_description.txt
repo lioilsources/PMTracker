@@ -1,0 +1,1 @@
+Időrögzítés geofence-szel: órák munkánként, helyzet tárolása nélkül

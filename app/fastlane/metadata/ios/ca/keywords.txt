@@ -1,0 +1,1 @@
+registre de temps,fitxatge,geovalla,treball,obra,serveis,hores,assistència,GPS

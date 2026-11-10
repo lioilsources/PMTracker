@@ -1,0 +1,6 @@
+PMTracker er tidsregistrering til bygge- og servicehold i marken.
+
+• Start og stop tidsregistreringen på den opgave, du er tildelt
+• Din position sammenlignes med opgavens geofence kun ved start og stop; koordinaterne kasseres, og kun resultatet gemmes
+• Uden for geofence kan du fortsætte med en begrundelse, og din leder får besked
+• Ledere opretter opgaver og ser rapporter over timer pr. teammedlem; administratorer styrer brugere og roller

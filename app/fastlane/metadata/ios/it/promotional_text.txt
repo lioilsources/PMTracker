@@ -1,0 +1,1 @@
+Registra il tempo di lavoro per commessa e dimostra chi era sul posto. La posizione viene verificata solo all'avvio e allo stop e non viene mai salvata.

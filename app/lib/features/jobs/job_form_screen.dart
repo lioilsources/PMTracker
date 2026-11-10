@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../auth/auth_provider.dart';
+import '../../l10n/app_localizations.dart';
 import 'jobs_screen.dart';
 
 class JobFormScreen extends ConsumerStatefulWidget {
@@ -115,9 +116,9 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(
-          title: Text(_isEdit ? 'Upravit zakázku' : 'Nová zakázka')),
+      appBar: AppBar(title: Text(_isEdit ? l.editJob : l.newJob)),
       body: _loading && _isEdit
           ? const Center(child: CircularProgressIndicator())
           : Form(
@@ -127,25 +128,24 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
                 children: [
                   TextFormField(
                     controller: _nameCtrl,
-                    decoration: const InputDecoration(
-                        labelText: 'Název zakázky *'),
+                    decoration: InputDecoration(labelText: l.jobName),
                     validator: (v) => v != null && v.trim().isNotEmpty
                         ? null
-                        : 'Povinné pole',
+                        : l.requiredField,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _descCtrl,
                     decoration:
-                        const InputDecoration(labelText: 'Popis'),
+                        InputDecoration(labelText: l.description),
                     maxLines: 3,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _addressCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Adresa',
-                      prefixIcon: Icon(Icons.location_on),
+                    decoration: InputDecoration(
+                      labelText: l.address,
+                      prefixIcon: const Icon(Icons.location_on),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -154,8 +154,8 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
                       Expanded(
                         child: TextFormField(
                           controller: _latCtrl,
-                          decoration: const InputDecoration(
-                              labelText: 'Zeměpisná šířka (lat)'),
+                          decoration:
+                              InputDecoration(labelText: l.latitude),
                           keyboardType:
                               const TextInputType.numberWithOptions(
                                   decimal: true, signed: true),
@@ -165,8 +165,8 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
                       Expanded(
                         child: TextFormField(
                           controller: _lonCtrl,
-                          decoration: const InputDecoration(
-                              labelText: 'Zeměpisná délka (lon)'),
+                          decoration:
+                              InputDecoration(labelText: l.longitude),
                           keyboardType:
                               const TextInputType.numberWithOptions(
                                   decimal: true, signed: true),
@@ -177,20 +177,20 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _geofenceCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Geofence poloměr (m)',
-                      prefixIcon: Icon(Icons.radar),
+                    decoration: InputDecoration(
+                      labelText: l.geofenceRadius,
+                      prefixIcon: const Icon(Icons.radar),
                     ),
                     keyboardType: TextInputType.number,
                     validator: (v) =>
-                        int.tryParse(v ?? '') != null ? null : 'Zadejte číslo',
+                        int.tryParse(v ?? '') != null ? null : l.enterNumber,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _hoursCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Odhadované hodiny',
-                      prefixIcon: Icon(Icons.schedule),
+                    decoration: InputDecoration(
+                      labelText: l.estimatedHours,
+                      prefixIcon: const Icon(Icons.schedule),
                     ),
                     keyboardType: const TextInputType.numberWithOptions(
                         decimal: true),
@@ -199,17 +199,16 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
                   DropdownButtonFormField<String>(
                     // ignore: deprecated_member_use
                     value: _status,
-                    decoration:
-                        const InputDecoration(labelText: 'Stav'),
-                    items: const [
+                    decoration: InputDecoration(labelText: l.status),
+                    items: [
                       DropdownMenuItem(
-                          value: 'active', child: Text('Aktivní')),
+                          value: 'active', child: Text(l.statusActive)),
                       DropdownMenuItem(
-                          value: 'paused', child: Text('Pozastavena')),
+                          value: 'paused', child: Text(l.statusPaused)),
                       DropdownMenuItem(
-                          value: 'completed', child: Text('Dokončena')),
+                          value: 'completed', child: Text(l.statusCompleted)),
                       DropdownMenuItem(
-                          value: 'archived', child: Text('Archiv')),
+                          value: 'archived', child: Text(l.statusArchived)),
                     ],
                     onChanged: (v) => setState(() => _status = v!),
                   ),
@@ -222,9 +221,7 @@ class _JobFormScreenState extends ConsumerState<JobFormScreen> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : Text(_isEdit
-                            ? 'Uložit změny'
-                            : 'Vytvořit zakázku'),
+                        : Text(_isEdit ? l.saveChanges : l.createJob),
                   ),
                 ],
               ),

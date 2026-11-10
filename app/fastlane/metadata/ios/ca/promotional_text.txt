@@ -1,0 +1,1 @@
+Registra el temps de treball per obra i demostra qui hi era. La ubicació només es comprova en iniciar i acabar, i no es desa mai.

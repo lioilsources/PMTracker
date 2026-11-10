@@ -1,0 +1,1 @@
+zaman takibi,puantaj,coğrafi sınır,iş,inşaat,saha servisi,çalışma saati,devam,GPS

@@ -1,0 +1,1 @@
+Registo de horas com geovedação: horas por obra sem guardar a localização

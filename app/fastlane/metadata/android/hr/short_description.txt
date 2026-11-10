@@ -1,0 +1,1 @@
+Evidencija vremena s geofenceom: sati po poslu bez spremanja lokacije

@@ -1,0 +1,1 @@
+registo de horas,ponto,geovedação,obra,construção,serviço externo,horário,presença,GPS

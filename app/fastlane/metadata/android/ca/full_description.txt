@@ -1,0 +1,6 @@
+PMTracker és un registre de temps per a equips de construcció i serveis de camp.
+
+• Inicia i acaba el registre de temps en el treball que tens assignat
+• La teva posició es compara amb la geovalla del treball només en iniciar i acabar; les coordenades es descarten i només es desa el resultat
+• Fora de la geovalla pots continuar indicant-ne el motiu, i s'informa el responsable
+• Els responsables creen treballs i veuen informes d'hores per membre de l'equip; els administradors gestionen usuaris i rols

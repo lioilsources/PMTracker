@@ -1,0 +1,6 @@
+PMTracker to ewidencja czasu dla zespołów budowlanych i serwisu terenowego.
+
+• Rozpocznij i zakończ ewidencję czasu na przypisanym zleceniu
+• Twoja pozycja jest porównywana z geofence zlecenia tylko przy starcie i stopie; współrzędne są odrzucane, zapisywany jest tylko wynik
+• Poza geofence możesz kontynuować, podając powód, a przełożony zostanie powiadomiony
+• Przełożeni tworzą zlecenia i widzą raporty godzin na członka zespołu; administratorzy zarządzają użytkownikami i rolami
