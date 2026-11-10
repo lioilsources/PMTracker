@@ -33,7 +33,7 @@ Vše jde přes start_tracking() / stop_tracking() SECURITY DEFINER funkce.
 - Docker Desktop (pro lokální Supabase)
 
 ### Kroky
-1. `cd /Volumes/YOTTA/Dev/PMTracker && supabase start`
+1. `cd <repo> && supabase start`
 2. `supabase db reset` (aplikuje migrace + seed)
 3. Otevřít Supabase Studio: http://localhost:54323
 4. Vytvořit testovací uživatele v Authentication > Users
